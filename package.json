@@ -1,0 +1,19 @@
+{
+  "name": "restaurant_finder_backed",
+  "version": "1.0.0",
+  "description": "RestaurantFinder for finding and reviewing restaurants. It supports Users (search and review), BusinessOwners (manage listings), and Admins (maintain data). The project features backend APIs, cloud deployment, and a web/mobile interface.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/server.js"
+  },
+  "author": "sunil vurandur",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7",
+    "pg": "^8.13.1",
+    "sequelize": "^6.37.5"
+  }
+}
