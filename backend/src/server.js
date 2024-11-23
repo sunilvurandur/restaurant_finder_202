@@ -3,8 +3,8 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 app.use(express.json())
-const { sequelize, initializeDatabase } = require('./models');
-
+const { models,sequelize, initializeDatabase } = require('./models');
+app.set('models', models)
 
 
 

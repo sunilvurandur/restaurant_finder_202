@@ -5,7 +5,7 @@ const BusinessHandler = require('../handlers/business_owner_handler');
 const router = express.Router();
 const businessHandler = new BusinessHandler();
 
-router.get('/login', (req, res) =>businessHandler.login(req, res));
-router.post('/business_owner', (req, res) => businessHandler.createBusinessOwner(req, res));
+router.post('/login', (req, res) =>businessHandler.login(req, res));
+router.post('/register', (req, res) => businessHandler.register(req, res));
 
 module.exports = router;
