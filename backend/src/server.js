@@ -18,7 +18,16 @@ app.use('/bussiness_owner', businessRoutes)
 app.get('/health',(req,res)=>{
     res.send({"msg": "Applicaiton is working !!" ,  "date" : `${new Date()}`})
 })
+const multer = require('multer');
 
+const storage = multer.memoryStorage(); // Store files in memory as buffer
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+});
+app.use(multer)
 // Sync the database and start the server
 const startServer = async () => {
     try {
