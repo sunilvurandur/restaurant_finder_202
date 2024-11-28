@@ -5,7 +5,6 @@ const path = require('path');
 const app = express();
 const port = 3000;
 // Azure Maps subscription key (replace with your actual key)
-const azureMapsKey = 'BONxG1YLyar4VokhBnTC5Rq0slEmh5ZhXNukOPW9SPmWgxSeMz52JQQJ99AKAC8vTInPp8evAAAgAZMP1C2u';
 // Serve static files (HTML, CSS, JS) from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 // Endpoint to handle location search
