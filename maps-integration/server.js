@@ -4,7 +4,6 @@ const axios = require('axios');
 const path = require('path');
 const app = express();
 const port = 3000;
-// Azure Maps subscription key (replace with your actual key)
 // Serve static files (HTML, CSS, JS) from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 // Endpoint to handle location search
