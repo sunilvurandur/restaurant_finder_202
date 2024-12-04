@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import ListingCard from "./ListingCard";
-import "../../styles/Layout.css";
-import Navbar from "../../components/shared/Navbar";
-import Footer from "../../components/shared/Footer";
+import "../../../styles/Layout.css";
+import Navbar from "../../../components/shared/Navbar";
+import Footer from "../../../components/shared/Footer";
 
 const AdminDashboard = ({ listings, onDelete, onFindDuplicates }) => {
   const [activeTab, setActiveTab] = useState("view");

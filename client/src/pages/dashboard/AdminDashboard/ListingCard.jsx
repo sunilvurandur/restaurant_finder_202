@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/Layout.css";
+import "../../../styles/Layout.css";
 
 // Function to calculate the average rating if not pre-calculated
 const calculateAverageRating = (reviews) => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AdminDashboard from "./AdminDashboard";
-import API from "../../services/API";
+import API from "../../../services/API";
 
 const AdminDashboardApp = () => {
   const [listings, setListings] = useState([]);

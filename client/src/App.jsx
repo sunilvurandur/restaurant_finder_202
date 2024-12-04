@@ -7,8 +7,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
 import PublicRoute from "./components/Routes/PublicRoute";
-import BusinessOwnerDashboard from "./pages/dashboard/BusinessOwnerDashboard";
-import AdminDashboardApp from "./pages/dashboard/AdminDashboardApp";
+import BusinessOwnerDashboard from "./pages/dashboard/BusinessOwner/BusinessOwnerDashboard";
+import AdminDashboardApp from "./pages/dashboard/AdminDashboard/AdminDashboardApp";
 import AdminLogin from "./pages/auth/AdminLogin";
 
 const router = createBrowserRouter([
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
     ),
   },  
   {
-    path: "/bussiness-owner-dashboard",
+    path: "/business-owner-dashboard",
     element :(<PublicRoute><BusinessOwnerDashboard/></PublicRoute>),
   },{
     path: "/admin-dashboard",

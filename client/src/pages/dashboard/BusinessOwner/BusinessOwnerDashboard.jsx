@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import AddListingForm from "./AddListingForm";
 import UpdateListingForm from "./UpdateListingForm";
 import ViewListings from "./ViewListings";
-import Navbar from "../../components/shared/Navbar";
-import Footer from "../../components/shared/Footer";
+import Navbar from "../../../components/shared/Navbar";
+import Footer from "../../../components/shared/Footer";
 
 const BusinessOwnerDashboard = () => {
   const [activeTab, setActiveTab] = useState("view"); // State to control the active view
