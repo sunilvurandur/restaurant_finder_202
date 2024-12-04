@@ -40,3 +40,18 @@
 .read-the-docs {
   color: #888;
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+.btn {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
