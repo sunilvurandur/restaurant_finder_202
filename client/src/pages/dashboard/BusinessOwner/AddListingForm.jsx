@@ -57,7 +57,7 @@ const AddListingForm = () => {
         }
       });
 
-      const { data } = await API.post("/listings", formDataToSend); // Replace with your API endpoint
+      const { data } = await API.post("/add-lisitng", formDataToSend); // Replace with your API endpoint
       if (data?.success) {
         alert("Listing added successfully!");
         setFormData({

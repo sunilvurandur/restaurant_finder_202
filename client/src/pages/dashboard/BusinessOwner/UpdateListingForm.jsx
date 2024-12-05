@@ -19,7 +19,7 @@ const UpdateListingForm = () => {
     if (!currentUser?.id) return; // Ensure the user is authenticated
 
     try {
-      const { data } = await API.get(`/listings?ownerId=${currentUser.id}`); // Fetch listings for the current user
+      const { data } = await API.get(`/get-user-lisitngs/${currentUser.id}`); // Fetch listings for the current user
       if (data?.success) {
         setListings(data.listings);
       }
@@ -97,7 +97,7 @@ const UpdateListingForm = () => {
         }
       });
 
-      const { data } = await API.put(`/listings/${selectedListing.id}`, formDataToSend);
+      const { data } = await API.put(`/get-user-lisitngs/${selectedListing.id}`, formDataToSend);
       if (data?.success) {
         alert("Listing updated successfully!");
         const updatedListings = listings.map((listing) =>
