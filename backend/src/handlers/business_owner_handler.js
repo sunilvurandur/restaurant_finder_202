@@ -89,7 +89,7 @@ class businessOwnerHandler{
             category,
             cuisine_type,
             price_range,
-            business_owner_id,
+            id,
             hours,
             description
           } = req.body;
@@ -103,7 +103,7 @@ class businessOwnerHandler{
             // }
         
             let BusinessOwner = req.app.get('models')['business_owners']
-            const businessOwner = await BusinessOwner.findOne({ where: { id: business_owner_id} });
+            const businessOwner = await BusinessOwner.findOne({ where: { id: id} });
             if (!businessOwner) {
               return res.status(404).json({ error: 'Business owner not found' });
             }
@@ -186,20 +186,17 @@ class businessOwnerHandler{
     }
 
     async updatedRestaurant(req, res){
+        console.log('coming here')
         const Restaurant = req.app.get('models')['restaurants'];
         const restaurantId = req.body.id;
-        const { name, address, contact_info, hours, description } = req.body;
+        const { name, address, hours,category, description,price_range,latitude, longitude } = req.body;
         let photoUrl = null;
-      
+        let hoursjson;
+        if(hours) {hoursjson = JSON.parse(hours)}
         try {
           // Find restaurant by ID
           const restaurant = await Restaurant.findOne({
-            where: { id: restaurantId },
-            include: [{
-              model: BusinessOwner,
-              required: true,  // Ensures that the restaurant is linked to a business owner
-              where: { id: req.user.id }, // Check if the logged-in user is the business owner
-            }],
+            where: { id: restaurantId }
           });
       
           if (!restaurant) {
@@ -216,10 +213,11 @@ class businessOwnerHandler{
           const updatedRestaurant = await restaurant.update({
             name: name || restaurant.name,
             address: address || restaurant.address,
-            contact_info: contact_info || restaurant.contact_info,
-            hours: hours || restaurant.hours,
+            hours: hoursjson || restaurant.hours,
             description: description || restaurant.description,
-            photos: photoUrl || restaurant.photo, // Only update if a new photo was uploaded
+            price_range: price_range || restaurant.price_range,
+            latitude: latitude || restaurant.latitude,
+            longitude: longitude || restaurant.longitude
           });
       
           res.status(200).json({
