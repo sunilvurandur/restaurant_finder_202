@@ -1,25 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import API from "../../../services/API";
-import InputType from "../../../components/shared/Form/InputType";
+import ListingFormFields from "./ListingFormFields";
 
 const UpdateListingForm = () => {
-  const currentUser = useSelector((state) => state.auth.user); // Get current user from Redux
+  const currentUser = useSelector((state) => state.auth.user);
   const [listings, setListings] = useState([]);
   const [selectedListing, setSelectedListing] = useState(null);
   const [formData, setFormData] = useState({
+    name: "",
+    address: "",
+    contactInfo: "",
+    description: "",
+    hours: {
+      sunday: { opening: "", closing: "" },
+      monday: { opening: "", closing: "" },
+      tuesday: { opening: "", closing: "" },
+      wednesday: { opening: "", closing: "" },
+      thursday: { opening: "", closing: "" },
+      friday: { opening: "", closing: "" },
+      saturday: { opening: "", closing: "" },
+    },
     photos: [],
+    category: [],
+    priceRange: "",
+    coverPhoto: null,
   });
+
   const [currentPage, setCurrentPage] = useState(1);
   const listingsPerPage = 5;
   const [loading, setLoading] = useState(false);
 
-  // Fetch listings owned by the current user
   const getUserListings = async () => {
-    if (!currentUser?.id) return; // Ensure the user is authenticated
+    if (!currentUser?.id) return;
 
     try {
-      const { data } = await API.get(`/get-user-lisitngs/${currentUser.id}`); // Fetch listings for the current user
+      const { data } = await API.get(`/get-user-listings/${currentUser.id}`);
       if (data?.success) {
         setListings(data.listings);
       }
@@ -32,7 +48,6 @@ const UpdateListingForm = () => {
     getUserListings();
   }, [currentUser]);
 
-  // Pagination logic
   const totalPages = Math.ceil(listings.length / listingsPerPage);
   const currentListings = listings.slice(
     (currentPage - 1) * listingsPerPage,
@@ -41,44 +56,26 @@ const UpdateListingForm = () => {
 
   const handleSelectListing = (listing) => {
     setSelectedListing(listing);
-    const photosWithPreview = (listing.photos || []).map((file) => ({
-      file,
-      url: file, // Use existing URL for photos from the backend
-    }));
-    setFormData({ ...listing, photos: photosWithPreview });
-  };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+    // Initialize formData from the selected listing
     setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    if (formData.photos.length + files.length > 10) {
-      alert("You can only upload a maximum of 10 photos");
-      return;
-    }
-
-    const newPhotos = files.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-    }));
-
-    setFormData({
-      ...formData,
-      photos: [...formData.photos, ...newPhotos],
-    });
-  };
-
-  const handleImageDelete = (index) => {
-    const updatedPhotos = formData.photos.filter((_, i) => i !== index);
-    setFormData({
-      ...formData,
-      photos: updatedPhotos,
+      name: listing.name || "",
+      address: listing.address || "",
+      contactInfo: listing.contactInfo || "",
+      description: listing.description || "",
+      hours: listing.hours || {
+        sunday: { opening: "", closing: "" },
+        monday: { opening: "", closing: "" },
+        tuesday: { opening: "", closing: "" },
+        wednesday: { opening: "", closing: "" },
+        thursday: { opening: "", closing: "" },
+        friday: { opening: "", closing: "" },
+        saturday: { opening: "", closing: "" },
+      },
+      photos: listing.photos || [],
+      category: listing.category || [],
+      priceRange: listing.priceRange || "",
+      coverPhoto: listing.coverPhoto || null,
     });
   };
 
@@ -87,17 +84,43 @@ const UpdateListingForm = () => {
     setLoading(true);
     try {
       const formDataToSend = new FormData();
-      Object.keys(formData).forEach((key) => {
-        if (key === "photos") {
-          formData.photos.forEach((photo) =>
-            formDataToSend.append("photos", photo.file || photo.url)
-          );
+      const serializedHours = JSON.stringify(formData.hours);
+      const serializedCategory = JSON.stringify(formData.category);
+
+      formData.photos.forEach((photo) => {
+        // If the photo is already a URL string, we may need logic on the backend
+        // to handle existing photos. For simplicity, assume they are File objects now.
+        // If they are URLs, the server should handle them accordingly.
+        if (photo instanceof File) {
+          formDataToSend.append("photos", photo);
         } else {
-          formDataToSend.append(key, formData[key]);
+          // For existing URLs, append them differently or send in JSON
+          // E.g., formDataToSend.append("existingPhotos", photo);
         }
       });
 
-      const { data } = await API.put(`/get-user-lisitngs/${selectedListing.id}`, formDataToSend);
+      if (formData.coverPhoto) {
+        if (formData.coverPhoto instanceof File) {
+          formDataToSend.append("coverPhoto", formData.coverPhoto);
+        } else {
+          // If it's a URL string (existing photo), handle accordingly
+          // e.g. formDataToSend.append("existingCoverPhoto", formData.coverPhoto);
+        }
+      }
+
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("address", formData.address);
+      formDataToSend.append("contactInfo", formData.contactInfo);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("hours", serializedHours);
+      formDataToSend.append("category", serializedCategory);
+      formDataToSend.append("priceRange", formData.priceRange);
+
+      const { data } = await API.put(`/update-listing/${selectedListing.id}`, formDataToSend,{
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       if (data?.success) {
         alert("Listing updated successfully!");
         const updatedListings = listings.map((listing) =>
@@ -126,7 +149,6 @@ const UpdateListingForm = () => {
             </div>
           ) : (
             <>
-              {/* Display listing cards */}
               <div className="listing-grid">
                 {currentListings.map((listing) => (
                   <div
@@ -135,18 +157,13 @@ const UpdateListingForm = () => {
                     onClick={() => handleSelectListing(listing)}
                   >
                     <h3>{listing.name}</h3>
-                    <p>
-                      <strong>Address:</strong> {listing.address}
-                    </p>
-                    <p>
-                      <strong>Owner:</strong> {listing.ownerName}
-                    </p>
+                    <p><strong>Address:</strong> {listing.address}</p>
+                    <p><strong>Owner:</strong> {listing.ownerName}</p>
                   </div>
                 ))}
               </div>
 
-              {/* Conditionally render pagination */}
-              {listings.length > 0 && (
+              {listings.length > listingsPerPage && (
                 <div className="pagination">
                   <button
                     onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -171,107 +188,27 @@ const UpdateListingForm = () => {
           )}
         </div>
       ) : (
-        <form onSubmit={handleSubmit}>
+        <>
           <h3>Update {formData.name}</h3>
-
-          <InputType
-            labelText="Name"
-            labelFor="name"
-            inputType="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
+          <ListingFormFields
+            formData={formData}
+            setFormData={setFormData}
+            loading={loading}
+            onSubmit={handleSubmit}
+            mode="update"
           />
-          <InputType
-            labelText="Address"
-            labelFor="address"
-            inputType="text"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-          <InputType
-            labelText="Contact Info"
-            labelFor="contactInfo"
-            inputType="text"
-            name="contactInfo"
-            value={formData.contactInfo}
-            onChange={handleChange}
-          />
-          <InputType
-            labelText="Operating Hours"
-            labelFor="hours"
-            inputType="text"
-            name="hours"
-            value={formData.hours}
-            onChange={handleChange}
-          />
-
-          <div className="mb-1">
-            <label htmlFor="description" className="form-label">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={formData.description || ""}
-              onChange={handleChange}
-              className="form-control"
-              placeholder="Description"
-            />
-          </div>
-
-          <div className="mb-1">
-            <label htmlFor="photos" className="form-label">
-              Photos (Max 10)
-            </label>
-            <input
-              type="file"
-              name="photos"
-              multiple
-              onChange={handleImageUpload}
-              className="form-control"
-            />
-            <div className="image-previews">
-              {(formData.photos || []).map((photo, index) => (
-                <div key={index} className="image-preview">
-                  <img src={photo.url} alt={`preview ${index}`} />
-                  <button type="button" onClick={() => handleImageDelete(index)}>
-                    &times;
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mb-1">
-            <label htmlFor="category" className="form-label">
-              Category
-            </label>
-            <select
-              name="category"
-              value={formData.category || ""}
-              onChange={handleChange}
-              className="form-control"
-            >
-              <option value="">Select Category</option>
-              <option value="Indian">Indian</option>
-              <option value="Mexican">Mexican</option> <option value="Italian">Italian</option> </select>
-               </div>
-               <button type="submit" className="btn btn-primary">
-        Update Listing
-      </button>
-      <button
-        type="button"
-        onClick={() => setSelectedListing(null)}
-        className="btn btn-secondary"
-      >
-        Back to Listings
-      </button>
-    </form>
-  )}
-
-  {loading && <div className="spinner-border text-primary" role="status" />}
-</div>
-); };
+          <button
+            type="button"
+            onClick={() => setSelectedListing(null)}
+            className="btn btn-secondary mt-2"
+          >
+            Back to Listings
+          </button>
+        </>
+      )}
+      {loading && <div className="spinner-border text-primary" role="status" />}
+    </div>
+  );
+};
 
 export default UpdateListingForm;
