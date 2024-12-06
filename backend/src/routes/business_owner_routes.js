@@ -12,8 +12,11 @@ router.post('/register', (req, res) => businessHandler.register(req, res));
 router.post('/createRestaurant',upload.single('photo'), (req, res) =>{
     businessHandler.createRestaurant(req, res);
 })
+
+
 router.get('/getRestaurants/:business_owner_id', (req, res) =>{
     businessHandler.getRestaurants(req, res);
 })
+
 
 module.exports = router;

@@ -89,7 +89,9 @@ class businessOwnerHandler{
             category,
             cuisine_type,
             price_range,
-            business_owner_id
+            business_owner_id,
+            hours,
+            description
           } = req.body;
         
         //   try {
@@ -110,6 +112,8 @@ class businessOwnerHandler{
             const fileName = `${Date.now()}_${req.file.originalname}`; // Unique filename
             photoUrl = await uploadToGitHub(req.file.buffer, fileName);
             }
+            
+            console.log(typeof(hours))
             // Create a new restaurant record
             const newRestaurant = await req.app.get('models')['restaurants'].create({
               name,
@@ -121,7 +125,7 @@ class businessOwnerHandler{
               price_range,
               hours, 
               description, 
-              photo:photoUrl
+              coverPhoto:photoUrl
             });
             
             const updatedRestaurantIds = businessOwner.restaurant_ids
@@ -213,7 +217,7 @@ class businessOwnerHandler{
             contact_info: contact_info || restaurant.contact_info,
             hours: hours || restaurant.hours,
             description: description || restaurant.description,
-            photos: photoUrl || restaurant.photos, // Only update if a new photo was uploaded
+            photos: photoUrl || restaurant.photo, // Only update if a new photo was uploaded
           });
       
           res.status(200).json({
