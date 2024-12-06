@@ -24,7 +24,11 @@ const daysOfWeek = [
 ];
 
 const RestaurantModal = ({ show, onHide, restaurant, currentLocation }) => {
-  // If restaurant or fields are missing, provide defaults
+  if (!restaurant) {
+    // Optionally render a fallback UI
+    return null;
+  }
+
   const {
     name = "",
     address = "",
@@ -34,11 +38,15 @@ const RestaurantModal = ({ show, onHide, restaurant, currentLocation }) => {
     category = [],
     priceRange = "",
     coverPhoto = null,
-    reviews = [], // assume we get reviews array here for demonstration
+    reviews: rawReviews = [],
     latitude = 37.3382,
     longitude = -121.8863,
-    photos = [],
-  } = restaurant || {};
+    photos: rawPhotos = [],
+  } = restaurant;
+
+  // Ensure 'reviews' and 'photos' are arrays
+  const reviews = Array.isArray(rawReviews) ? rawReviews : [];
+  const photos = Array.isArray(rawPhotos) ? rawPhotos : [];
 
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
