@@ -9,7 +9,7 @@ const AdminDashboardApp = () => {
   // Fetch all listings from the backend
   const fetchListings = async () => {
     try {
-      const { data } = await API.get("/listings"); // Fetch all listings
+      const { data } = await API.post("/admin/listings"); // Fetch all listings
       if (data) {
         setListings(data.listings);
       }
@@ -27,7 +27,7 @@ const AdminDashboardApp = () => {
   // Delete a listing by ID
   const handleDelete = async (id) => {
     try {
-      const { data } = await API.delete(`/listings/${id}`);
+      const { data } = await API.delete(`/admin/listings/${id}`);
       if (data?.success) {
         setListings((prev) => prev.filter((listing) => listing.id !== id));
         alert("Listing deleted successfully!");

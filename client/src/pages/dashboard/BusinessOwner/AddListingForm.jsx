@@ -22,7 +22,7 @@ const AddListingForm = () => {
     photos: [],
     category: [],
     priceRange: "",
-    file: null,
+    coverPhoto: null,
     latitude: "",
     longitude: "",
   });
@@ -54,8 +54,8 @@ const AddListingForm = () => {
       });
   
       // Append cover photo
-      if (formData.file) {
-        formDataToSend.append("file", formData.file);
+      if (formData.coverPhoto) {
+        formDataToSend.append("coverPhoto", formData.coverPhoto);
       }
   
       // Log FormData contents for debugging
@@ -90,7 +90,7 @@ const AddListingForm = () => {
           photos: [],
           category: [],
           priceRange: "",
-          file: null,
+          coverPhoto: null,
           latitude: "",
           longitude: "",
         });
