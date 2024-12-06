@@ -93,7 +93,7 @@ class businessOwnerHandler{
             hours,
             description
           } = req.body;
-        
+        console.log(req.file);
           let hoursjson = JSON.parse(hours);
           let categoryjson = JSON.parse(category)
         //   try {

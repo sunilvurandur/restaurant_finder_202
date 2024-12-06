@@ -13,7 +13,7 @@ const businessHandler = new BusinessHandler();
 router.post('/login', (req, res) =>businessHandler.login(req, res));
 router.post('/register', (req, res) => businessHandler.register(req, res));
 
-router.post('/createRestaurant',upload.single('photo'), (req, res) =>{
+router.post('/createRestaurant',upload.single('coverPhoto'), (req, res) =>{
     businessHandler.createRestaurant(req, res);
 })
 
