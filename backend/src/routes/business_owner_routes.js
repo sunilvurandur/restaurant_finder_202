@@ -23,6 +23,6 @@ router.get('/getRestaurants/:business_owner_id', (req, res) =>{
 })
 
 router.post('/shutdown', (req, res)=> users.shutdownBusinessOwner(req, res))
-
+router.post('/update-listing', (req, res)=>businessHandler.updatedRestaurant(req, res))
 
 module.exports = router;
