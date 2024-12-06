@@ -78,7 +78,7 @@ class businessOwnerHandler{
             return res.status(500).json({ error: 'Internal server error.' });
         }
     }
-
+    
     async createRestaurant(req, res){
         try{
         const {

@@ -193,7 +193,7 @@ calculateAverageRating(reviews){
     }
     
     async search(req, res){
-    const { name, category, price_range, rating, latitude, longitude, radius } = req.body;
+    const { name, category, price_range, rating, latitude, longitude, radius } = req.query;
 
     try {
         const results = await this.searchRestaurants(req,{
@@ -309,7 +309,7 @@ calculateAverageRating(reviews){
 
 
     
-            return res.status(200).json({ message: 'Login successful', user });
+            return res.status(200).json({ message: 'Login successful.', user });
         } catch (error) {
             console.error('Error during login:', error);
             return res.status(500).json({ error: 'Internal server error' });
@@ -394,41 +394,6 @@ calculateAverageRating(reviews){
         } catch (error) {
             console.error('Error removing restaurants:', error);
             return res.status(500).json({ error: 'Internal server error' });
-        }
-    }
-
-    async viewdbRestaurants(req, res){
-        try {
-            const restaurants = await req.app.get('models')['restaurants'].findAll();
-            if(restaurants) return res.status(200).send({"listing":restaurants})
-        } catch (error) {
-            console.log('error')
-            return res.status(500).send({msg:"Internal Server Error"})
-        }
-    }
-
-    async deleteListing(req, res) {
-        const id = req.query.id; // Extract id from request parameters
-        // console.log(req.query)
-        console.log(id)
-        try {
-            const restaurantModel = req.app.get('models')['restaurants'];
-    
-            // Attempt to delete the restaurant by id
-            const deletedCount = await restaurantModel.destroy({
-                where: { id }
-            });
-    
-            // Check if a record was deleted
-            if (deletedCount === 0) {
-                return res.status(404).json({ message: 'Restaurant not found.' });
-            }
-    
-            // Return success response
-            return res.status(200).json({ message: `Restaurant with id ${id} deleted successfully.` });
-        } catch (error) {
-            console.error('Error deleting restaurant:', error);
-            return res.status(500).json({ message: 'Failed to delete restaurant.', error: error.message });
         }
     }
 }
