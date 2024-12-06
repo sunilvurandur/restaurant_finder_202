@@ -14,8 +14,6 @@ app.use(cors({
 app.use(express.json())
 const { models,sequelize, initializeDatabase } = require('./models');
 app.set('models', models)
-const cors = require('cors');
-app.use(cors());
 
 
 
