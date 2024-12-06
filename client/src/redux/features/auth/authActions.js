@@ -13,11 +13,17 @@ export const userLogin = createAsyncThunk(
       const { data } = await API.post(endpoint, { email, password });
       
       if (data.message == "Login successful.") {
+
         if(role === "businessOwner"){
           localStorage.setItem("businessOwnerData", JSON.stringify(data));
           window.location.replace("/business-owner-dashboard");
         }
+        else if(data.user.id == 1){
+          localStorage.setItem("businessOwnerData", JSON.stringify(data));
+          window.location.replace("/admin-dashboard");
+        }
       }
+
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);

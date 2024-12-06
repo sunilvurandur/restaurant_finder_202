@@ -266,13 +266,13 @@ const UpdateListingForm = () => {
               loading={loading}
               mode="update"
             />
-            <button
+            {/* <button
               type="submit"
               className="btn btn-primary"
               disabled={loading}
             >
               {loading ? "Updating..." : "Update Listing"}
-            </button>
+            </button> */}
           </form>
           <button
             type="button"
