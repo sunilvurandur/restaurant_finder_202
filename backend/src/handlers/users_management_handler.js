@@ -153,7 +153,7 @@ calculateAverageRating(reviews){
     }
 
     async searchRestaurants(req,query){
-        const { name, category, price_range, rating, latitude, longitude, radius } = query;
+        const { name, category, price_range, rating, latitude, longitude, radius } = req.body;
 
     
         try {
@@ -193,7 +193,7 @@ calculateAverageRating(reviews){
     }
     
     async search(req, res){
-    const { name, category, price_range, rating, latitude, longitude, radius } = req.query;
+    const { name, category, price_range, rating, latitude, longitude, radius } = req.body;
 
     try {
         const results = await this.searchRestaurants(req,{
