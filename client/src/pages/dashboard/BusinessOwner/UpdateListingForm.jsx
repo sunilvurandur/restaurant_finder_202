@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import API from "../../../services/API";
 import ListingFormFields from "./ListingFormFields";
-
-
+import "../../../styles/Layout.css";
 
 const UpdateListingForm = () => {
-  const businessOwnerData = JSON.parse(localStorage.getItem("businessOwnerData"));
+  // Initialize businessOwnerData once and ensure it's stable
+  const [businessOwnerData, setBusinessOwnerData] = useState(() => {
+    try {
+      const data = localStorage.getItem("businessOwnerData");
+      return data ? JSON.parse(data) : null;
+    } catch (error) {
+      console.error("Failed to parse businessOwnerData:", error);
+      return null;
+    }
+  });
+
   const [listings, setListings] = useState([]);
   const [selectedListing, setSelectedListing] = useState(null);
   const [formData, setFormData] = useState({
+    id: "", // Will be set when a listing is selected
     name: "",
     address: "",
-    contactInfo: "",
     description: "",
     hours: {
       sunday: { opening: "", closing: "" },
@@ -27,48 +35,81 @@ const UpdateListingForm = () => {
     category: [],
     priceRange: "",
     coverPhoto: null,
-    latitude:"",
-    longitude:"",
+    latitude: "",
+    longitude: "",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
   const listingsPerPage = 5;
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null); // Error state
 
+  // Fetch listings for the current user
   const getUserListings = async () => {
-    if (!businessOwnerData) return;
+    if (!businessOwnerData) {
+      console.error("Business owner data is missing.");
+      setError("Business owner data is missing.");
+      return;
+    }
 
     try {
-      const { data } = await API.get(`/business-owner/getRestaurants/${businessOwnerData.owner.id}`);
-      if (data) {
-        setListings(data.listing);
-      }
+      setLoading(true);
+      const response = await API.get(`/business-owner/getRestaurants/${businessOwnerData.owner.id}`);
+      
+      // Debugging: Log the entire response
+      console.log("API Response:", response);
+
+      // Ensure that data.lisiting exists and is an array (due to typo)
+      const fetchedListings = Array.isArray(response.data.lisiting) ? response.data.lisiting : [];
+      
+      // Debugging: Log the fetched listings
+      console.log("Fetched Listings:", fetchedListings);
+
+      setListings(fetchedListings);
     } catch (error) {
       console.error("Error fetching user listings:", error);
-      
+      setError("Failed to load listings. Please try again later.");
+      setListings([]); // Default to an empty array on error
+    } finally {
+      setLoading(false); // Data fetching is complete
     }
   };
 
   useEffect(() => {
-    if(businessOwnerData)
-    getUserListings();
-  }, []);
+    if (businessOwnerData) {
+      getUserListings();
+    } else {
+      console.warn("No business owner data found in localStorage.");
+      setError("No business owner data found.");
+    }
+    // The dependency array is intentionally left empty to run once on mount
+  }, []); // Removed businessOwnerData from dependencies to prevent infinite loop
 
+  // Calculate total pages
   const totalPages = Math.ceil(listings.length / listingsPerPage);
+
+  // Get the listings for the current page
   const currentListings = listings.slice(
     (currentPage - 1) * listingsPerPage,
     currentPage * listingsPerPage
   );
 
+  // Function to calculate the average rating of reviews
+  const calculateAverageRating = (reviews) => {
+    if (!Array.isArray(reviews) || reviews.length === 0) return "No ratings";
+    const total = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
+    return (total / reviews.length).toFixed(1); // Rounded to one decimal place
+  };
+
+  // Open modal with selected listing
   const handleSelectListing = (listing) => {
     setSelectedListing(listing);
 
     // Initialize formData from the selected listing
     setFormData({
-
+      id: listing.id || "",
       name: listing.name || "",
       address: listing.address || "",
-      contactInfo: listing.contactInfo || "",
       description: listing.description || "",
       hours: listing.hours || {
         sunday: { opening: "", closing: "" },
@@ -81,13 +122,14 @@ const UpdateListingForm = () => {
       },
       photos: listing.photos || [],
       category: listing.category || [],
-      priceRange: listing.priceRange || "",
+      priceRange: listing.price_range || "", // Match API field name
       coverPhoto: listing.coverPhoto || null,
-      latitude:"",
-      longitude:"",
+      latitude: listing.latitude || "",
+      longitude: listing.longitude || "",
     });
   };
 
+  // Handle form submission to update the listing
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -96,30 +138,26 @@ const UpdateListingForm = () => {
       const serializedHours = JSON.stringify(formData.hours);
       const serializedCategory = JSON.stringify(formData.category);
 
-      formData.photos.forEach((photo) => {
-        // If the photo is already a URL string, we may need logic on the backend
-        // to handle existing photos. For simplicity, assume they are File objects now.
-        // If they are URLs, the server should handle them accordingly.
+      formData.photos.forEach((photo, index) => {
         if (photo instanceof File) {
           formDataToSend.append("photos", photo);
-        } else {
-          // For existing URLs, append them differently or send in JSON
-          // E.g., formDataToSend.append("existingPhotos", photo);
+        } else if (typeof photo === "string") {
+          // Handle existing photo URLs if necessary
+          formDataToSend.append("existingPhotos", photo);
         }
       });
 
       if (formData.coverPhoto) {
         if (formData.coverPhoto instanceof File) {
           formDataToSend.append("coverPhoto", formData.coverPhoto);
-        } else {
-          // If it's a URL string (existing photo), handle accordingly
-          // e.g. formDataToSend.append("existingCoverPhoto", formData.coverPhoto);
+        } else if (typeof formData.coverPhoto === "string") {
+          // Handle existing cover photo URL if necessary
+          formDataToSend.append("existingCoverPhoto", formData.coverPhoto);
         }
       }
 
       formDataToSend.append("name", formData.name);
       formDataToSend.append("address", formData.address);
-      formDataToSend.append("contactInfo", formData.contactInfo);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("hours", serializedHours);
       formDataToSend.append("category", serializedCategory);
@@ -127,11 +165,17 @@ const UpdateListingForm = () => {
       formDataToSend.append("latitude", formData.latitude);
       formDataToSend.append("longitude", formData.longitude);
 
-      const { data } = await API.put(`/update-listing/${selectedListing.id}`, formDataToSend,{
+      // Make sure selectedListing is defined
+      if (!selectedListing) {
+        throw new Error("No listing selected for update.");
+      }
+
+      const { data } = await API.put(`/update-listing/${selectedListing.id}`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+
       if (data?.success) {
         alert("Listing updated successfully!");
         const updatedListings = listings.map((listing) =>
@@ -139,6 +183,8 @@ const UpdateListingForm = () => {
         );
         setListings(updatedListings);
         setSelectedListing(null);
+      } else {
+        throw new Error(data.message || "Update failed.");
       }
     } catch (error) {
       console.error("Error updating listing:", error);
@@ -149,11 +195,22 @@ const UpdateListingForm = () => {
   };
 
   return (
-    <div>
+    <div className="update-listing-container">
       <h2>Update Your Listings</h2>
       {!selectedListing ? (
         <div>
-          {listings.length === 0 ? (
+          {loading ? (
+            <div className="text-center mt-4">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="text-center mt-4">
+              <h4>Error</h4>
+              <p>{error}</p>
+            </div>
+          ) : listings.length === 0 ? (
             <div className="text-center mt-4">
               <h4>No Listings Found</h4>
               <p>You currently have no listings available for update.</p>
@@ -169,11 +226,12 @@ const UpdateListingForm = () => {
                   >
                     <h3>{listing.name}</h3>
                     <p><strong>Address:</strong> {listing.address}</p>
-                    <p><strong>Owner:</strong> {listing.ownerName}</p>
+                    {/* Removed ownerName as it's not in the API response */}
                   </div>
                 ))}
               </div>
 
+              {/* Pagination Controls */}
               {listings.length > listingsPerPage && (
                 <div className="pagination">
                   <button
@@ -201,13 +259,21 @@ const UpdateListingForm = () => {
       ) : (
         <>
           <h3>Update {formData.name}</h3>
-          <ListingFormFields
-            formData={formData}
-            setFormData={setFormData}
-            loading={loading}
-            onSubmit={handleSubmit}
-            mode="update"
-          />
+          <form onSubmit={handleSubmit}>
+            <ListingFormFields
+              formData={formData}
+              setFormData={setFormData}
+              loading={loading}
+              mode="update"
+            />
+            {/* <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={loading}
+            >
+              {loading ? "Updating..." : "Update Listing"}
+            </button> */}
+          </form>
           <button
             type="button"
             onClick={() => setSelectedListing(null)}
@@ -217,7 +283,12 @@ const UpdateListingForm = () => {
           </button>
         </>
       )}
-      {loading && <div className="spinner-border text-primary" role="status" />}
+      {/* Optional: Display a spinner while loading */}
+      {loading && selectedListing && (
+        <div className="spinner-border text-primary mt-3" role="status">
+          <span className="visually-hidden">Updating...</span>
+        </div>
+      )}
     </div>
   );
 };

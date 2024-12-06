@@ -10,7 +10,7 @@ const AdminDashboardApp = () => {
   const fetchListings = async () => {
     try {
       const { data } = await API.get("/listings"); // Fetch all listings
-      if (data?.success) {
+      if (data) {
         setListings(data.listings);
       }
     } catch (error) {

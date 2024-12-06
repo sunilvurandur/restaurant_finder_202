@@ -177,7 +177,7 @@ class businessOwnerHandler{
 
             res.status(200).json({
                 message: `Restaurants for Business Owner ID: ${business_owner_id}`,
-                data: restaurants,
+                lisiting: restaurants,
             });
         } catch (error) {
             console.error('Error fetching restaurants:', error);
