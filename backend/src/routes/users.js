@@ -14,4 +14,6 @@ router.post('/addReview', (req, res)=> users.addReview(req, res))
 router.post('/login', (req, res)=> users.login(req, res));
 router.post('/register', (req, res)=> users.register(req, res));
 
-module.exports = router;
+
+router.post('/duplicate', (req, res)=> users.checkDuplicateListings(req, res))
+module.exports = router;   

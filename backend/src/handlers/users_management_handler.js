@@ -4,6 +4,7 @@ const maps = new mapsHandler();
 const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { users } = require('../models');
+const sequelize = require('sequelize')
 
 class UsersManagementHander{
     constructor(){}
@@ -346,6 +347,55 @@ calculateAverageRating(reviews){
         }
     }
 
+
+
+
+    //duplicate listing
+    async checkDuplicateListings(req, res) {
+        try {
+            const duplicates = await req.app.get('models')['restaurants'].findAll({
+                attributes: ['name', 'address', [sequelize.fn('COUNT', sequelize.col('id')), 'count']],
+                group: ['name', 'address'],
+                having: sequelize.literal('COUNT(id) > 1'),
+            });
+    
+            if (!duplicates.length) {
+                return res.status(200).json({ message: 'No duplicate listings found' });
+            }
+    
+            return res.status(200).json({ duplicates });
+        } catch (error) {
+            console.error('Error checking duplicate listings:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+
+    async removeRestaurantsByOwner(req, res) {
+        const { ownerId } = req.body;
+    
+        try {
+            // Check if business owner exists
+            const owner = await business_owners.findByPk(ownerId);
+    
+            if (!owner) {
+                return res.status(404).json({ error: 'Business owner not found' });
+            }
+    
+            // Check if the owner's status is false
+            if (owner.status !== false) {
+                return res.status(400).json({ error: 'Cannot remove restaurants. Business owner is still active.' });
+            }
+    
+            // Remove all restaurants owned by this business owner
+            await restaurants.destroy({ where: { ownerId } });
+    
+            return res.status(200).json({ message: 'All restaurants for the business owner have been removed' });
+        } catch (error) {
+            console.error('Error removing restaurants:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
 }
 
 module.exports = UsersManagementHander;

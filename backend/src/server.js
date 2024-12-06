@@ -21,10 +21,12 @@ app.use(cors({
 require('./routes/routes')(app,router)
 const businessRoutes = require('./routes/business_owner_routes')
 const userRoutes = require('./routes/users')
+const adminRoutes = require('./routes/admin')
 app.use('/',router);
 
 app.use('/business-owner', businessRoutes)
-app.use('/users',userRoutes)
+app.use('/users', userRoutes)
+app.use('/admin', adminRoutes)
 app.use
 app.get('/health',(req,res)=>{
     res.send({"msg": "Applicaiton is working !!" ,  "date" : `${new Date()}`})
