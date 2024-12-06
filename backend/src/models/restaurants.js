@@ -1,10 +1,12 @@
 // models/user.js
+const { v4: uuidv4 } = require('uuid');
+
 module.exports = (sequelize, DataTypes) => {
     const restaurant = sequelize.define('restaurants',   {
         id: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.UUID,
           primaryKey: true,
-          autoIncrement: true,
+          defaultValue: uuidv4, // Automatically generates a UUID
         },
         name: {
           type: DataTypes.STRING(100),
@@ -23,11 +25,7 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: true,
         },
         category: {
-          type: DataTypes.STRING(50),
-          allowNull: true,
-        },
-        cuisine_type: {
-          type: DataTypes.STRING(50),
+          type: DataTypes.ARRAY(DataTypes.STRING),
           allowNull: true,
         },
         price_range: {
@@ -35,18 +33,21 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: true,
         },
         hours: {
-          type: DataTypes.STRING(255),
+          type: DataTypes.JSON,
           allowNull: true,
         },
         photos: {
-          type: DataTypes.JSON, // Binary Large Object for storing file data
+          type: DataTypes.ARRAY(DataTypes.TEXT), // Binary Large Object for storing file data
           allowNull: true,
         },
         description: {
           type: DataTypes.TEXT,
           allowNull: true,
         },
+        coverPhoto: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        }
       },{});
-  
     return restaurant;
   };
