@@ -94,6 +94,8 @@ class businessOwnerHandler{
             description
           } = req.body;
         
+          let hoursjson = JSON.parse(hours);
+          let categoryjson = JSON.parse(category)
         //   try {
             // Validate required fields
             // if (!name || !address) {
@@ -120,10 +122,10 @@ class businessOwnerHandler{
               address,
               latitude,
               longitude,
-              category,
+              category:categoryjson,
               cuisine_type,
               price_range,
-              hours, 
+              hours:hoursjson, 
               description, 
               coverPhoto:photoUrl
             });
@@ -185,7 +187,7 @@ class businessOwnerHandler{
 
     async updatedRestaurant(req, res){
         const Restaurant = req.app.get('models')['restaurants'];
-        const restaurantId = req.params.id;
+        const restaurantId = req.body.id;
         const { name, address, contact_info, hours, description } = req.body;
         let photoUrl = null;
       
