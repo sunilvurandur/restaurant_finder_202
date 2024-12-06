@@ -22,8 +22,7 @@ const UpdateListingForm = () => {
       saturday: { opening: "", closing: "" },
     },
     photos: [],
-    category: "",
-    foodType: [],
+    category: [],
     priceRange: "",
     coverPhoto: null,
   });
@@ -74,8 +73,7 @@ const UpdateListingForm = () => {
         saturday: { opening: "", closing: "" },
       },
       photos: listing.photos || [],
-      category: listing.category || "",
-      foodType: listing.foodType || [],
+      category: listing.category || [],
       priceRange: listing.priceRange || "",
       coverPhoto: listing.coverPhoto || null,
     });
@@ -87,7 +85,7 @@ const UpdateListingForm = () => {
     try {
       const formDataToSend = new FormData();
       const serializedHours = JSON.stringify(formData.hours);
-      const serializedFoodType = JSON.stringify(formData.foodType);
+      const serializedCategory = JSON.stringify(formData.category);
 
       formData.photos.forEach((photo) => {
         // If the photo is already a URL string, we may need logic on the backend
@@ -115,8 +113,7 @@ const UpdateListingForm = () => {
       formDataToSend.append("contactInfo", formData.contactInfo);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("hours", serializedHours);
-      formDataToSend.append("foodType", serializedFoodType);
-      formDataToSend.append("category", formData.category);
+      formDataToSend.append("category", serializedCategory);
       formDataToSend.append("priceRange", formData.priceRange);
 
       const { data } = await API.put(`/update-listing/${selectedListing.id}`, formDataToSend,{

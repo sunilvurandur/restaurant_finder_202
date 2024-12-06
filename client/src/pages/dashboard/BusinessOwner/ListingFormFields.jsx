@@ -58,11 +58,11 @@ const ListingFormFields = ({
     }
   };
 
-  const toggleFoodType = (food, checked) => {
-    const newFoodType = checked
-      ? [...formData.foodType, food]
-      : formData.foodType.filter((item) => item !== food);
-    setFormData({ ...formData, foodType: newFoodType });
+  const toggleCategory = (cat, checked) => {
+    const newCategory = checked
+      ? [...formData.category, cat]
+      : formData.category.filter((item) => item !== cat);
+    setFormData({ ...formData, category: newCategory });
   };
 
   return (
@@ -164,53 +164,39 @@ const ListingFormFields = ({
         ))}
       </Row>
 
-      {/* Food Type (Checkboxes) */}
+      {/* Category (Checkboxes) */}
       <Form.Group className="mb-3">
-        <Form.Label>Food Type</Form.Label>
+        <Form.Label>Category</Form.Label>
         <Row>
-          {["Vegan", "Vegetarian", "Non-Veg", "Gluten Free"].map((food) => (
-            <Col key={food} sm={3}>
+          {["Vegan", "Vegetarian", "Non-Veg", "Gluten Free", "American", "Indian", "Mexican", "Italian"].map((cat) => (
+            <Col key={cat} sm={3}>
               <Form.Check
                 type="checkbox"
-                label={food}
-                value={food}
-                onChange={(e) => toggleFoodType(food, e.target.checked)}
-                checked={formData.foodType.includes(food)}
+                label={cat}
+                value={cat}
+                onChange={(e) => toggleCategory(cat, e.target.checked)}
+                checked={formData.category.includes(cat)}
               />
             </Col>
           ))}
         </Row>
       </Form.Group>
 
-      {/* Category */}
+      {/* price range */}
       <Form.Group className="mb-3">
-        <Form.Label>Category</Form.Label>
-        <Form.Control
-          as="select"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Category</option>
-          <option value="American">American</option>
-          <option value="Indian">Indian</option>
-          <option value="Mexican">Mexican</option>
-          <option value="Italian">Italian</option>
-          <option value="Chinese">Chinese</option>
-        </Form.Control>
-      </Form.Group>
-
-      {/* Price Range */}
-      <Form.Group controlId="priceRange" className="mb-3">
         <Form.Label>Price Range</Form.Label>
         <Form.Control
-          type="number"
+          as="select"
           name="priceRange"
           value={formData.priceRange}
           onChange={handleChange}
-          placeholder="Average price for two people"
-        />
+          required
+        >
+          <option value="">Select Price Range</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </Form.Control>
       </Form.Group>
 
       {/* Photos Upload */}

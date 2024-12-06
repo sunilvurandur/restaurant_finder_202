@@ -18,8 +18,7 @@ const AddListingForm = () => {
       saturday: { opening: "", closing: "" },
     },
     photos: [],
-    category: "",
-    foodType: [],
+    category: [],
     priceRange: "",
     coverPhoto: null,
   });
@@ -33,7 +32,7 @@ const AddListingForm = () => {
     try {
       const formDataToSend = new FormData();
       const serializedHours = JSON.stringify(formData.hours);
-      const serializedFoodType = JSON.stringify(formData.foodType);
+      const serializedCategory = JSON.stringify(formData.category);
 
       formData.photos.forEach((photo) => formDataToSend.append("photos", photo));
       if (formData.coverPhoto) {
@@ -45,8 +44,7 @@ const AddListingForm = () => {
       formDataToSend.append("contactInfo", formData.contactInfo);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("hours", serializedHours);
-      formDataToSend.append("foodType", serializedFoodType);
-      formDataToSend.append("category", formData.category);
+      formDataToSend.append("category", serializedCategory);
       formDataToSend.append("priceRange", formData.priceRange);
       console.log (formDataToSend);
       const { data } = await API.post("/add-listing", formDataToSend, {
@@ -71,8 +69,7 @@ const AddListingForm = () => {
             saturday: { opening: "", closing: "" },
           },
           photos: [],
-          category: "",
-          foodType: [],
+          category: [],
           priceRange: "",
           coverPhoto: null,
         });
