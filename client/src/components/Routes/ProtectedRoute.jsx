@@ -37,7 +37,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
 
   // Show loading spinner while fetching user data
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Loading... protected</div>;
   }
 
   // Handle unauthenticated users

@@ -50,13 +50,17 @@ const authSlice = createSlice({
       state.error = null;
     });
     builder.addCase(getCurrentUser.fulfilled, (state, { payload }) => {
+      console.log("getCurrentUser fulfilled with payload:", payload); // Debug log
       state.loading = false;
       state.user = payload.user;
     });
+    
     builder.addCase(getCurrentUser.rejected, (state, { payload }) => {
+      console.error("getCurrentUser rejected with error:", payload); // Debug log
       state.loading = false;
       state.error = payload;
     });
+    
   },
 });
 

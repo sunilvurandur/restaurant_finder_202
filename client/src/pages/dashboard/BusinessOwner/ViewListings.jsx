@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import API from "../../../services/API";
+import RestaurantModal from "../../../components/shared/RestaurantModal"; // Import the modal component
 import "../../../styles/Layout.css";
+
 
 const ViewListings = () => {
   const currentUser = useSelector((state) => state.auth.user); // Get current user from Redux
   const [listings, setListings] = useState([]);
-  const [selectedListing, setSelectedListing] = useState(null);
+  const [selectedListing, setSelectedListing] = useState(null); // Track the selected listing
+  const [showModal, setShowModal] = useState(false); // Track modal visibility
   const [currentPage, setCurrentPage] = useState(1);
   const listingsPerPage = 8;
 
@@ -15,12 +18,13 @@ const ViewListings = () => {
     if (!currentUser?.id) return; // Ensure the user is authenticated
 
     try {
-      const { data } = await API.get(`/get-user-listings/${currentUser.id}`); // Fetch listings for the current user
+      const { data } = await API.get(`/bussiness_owner/getRestaurants/${currentUser.id}`); // Fetch listings for the current user
       if (data?.success) {
         setListings(data.listings);
       }
     } catch (error) {
       console.error("Error fetching user listings:", error);
+
     }
   };
 
@@ -44,81 +48,83 @@ const ViewListings = () => {
     return (total / reviews.length).toFixed(1); // Rounded to one decimal place
   };
 
+  // Open modal with selected listing
+  const handleListingClick = (listing) => {
+    setSelectedListing(listing);
+    setShowModal(true);
+  };
+
+  // Close modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedListing(null);
+  };
+
   return (
     <div className="listing-page-container">
       <h2>Your Listings</h2>
 
-      {!selectedListing ? (
-        <div className="listing-grid-container">
-          {listings.length === 0 ? (
-            <div className="text-center mt-4">
-              <h4>No Listings Found</h4>
-              <p>You currently have no listings available.</p>
-            </div>
-          ) : (
-            <>
-              {/* Display listing cards */}
-              <div className="listing-grid">
-                {currentListings.map((listing) => (
-                  <div
-                    key={listing.id}
-                    className="listing-card"
-                    onClick={() => setSelectedListing(listing)}
-                  >
-                    <h3>{listing.name}</h3>
-                    <p>
-                      <strong>Address:</strong> {listing.address}
-                    </p>
-                    <p>
-                      <strong>Average Rating:</strong>{" "}
-                      {calculateAverageRating(listing.reviews)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Conditionally render pagination */}
-              {listings.length > 0 && (
-                <div className="pagination">
-                  <button
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className="btn btn-previous"
-                  >
-                    Previous
-                  </button>
-                  <span className="page-info">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <button
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className="btn btn-next"
-                  >
-                    Next
-                  </button>
+      <div className="listing-grid-container">
+        {listings.length === 0 ? (
+          <div className="text-center mt-4">
+            <h4>No Listings Found</h4>
+            <p>You currently have no listings available.</p>
+          </div>
+        ) : (
+          <>
+            {/* Display listing cards */}
+            <div className="listing-grid">
+              {currentListings.map((listing) => (
+                <div
+                  key={listing.id}
+                  className="listing-card"
+                  onClick={() => handleListingClick(listing)} // Open modal on click
+                >
+                  <h3>{listing.name}</h3>
+                  <p>
+                    <strong>Address:</strong> {listing.address}
+                  </p>
+                  <p>
+                    <strong>Average Rating:</strong>{" "}
+                    {calculateAverageRating(listing.reviews)}
+                  </p>
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      ) : (
-        <div>
-          <h3>{selectedListing.name}</h3>
-          <p>Description: {selectedListing.description}</p>
-          <p>Address: {selectedListing.address}</p>
-          <p>Contact Info: {selectedListing.contactInfo}</p>
-          <p>Operating Hours: {selectedListing.hours}</p>
-          <p>Category: {selectedListing.category}</p>
-          <p>Average Rating: {calculateAverageRating(selectedListing.reviews)}</p>
+              ))}
+            </div>
 
-          <button
-            onClick={() => setSelectedListing(null)}
-            className="btn btn-secondary"
-          >
-            Back to Listings
-          </button>
-        </div>
+            {/* Conditionally render pagination */}
+            {listings.length > 0 && (
+              <div className="pagination">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="btn btn-previous"
+                >
+                  Previous
+                </button>
+                <span className="page-info">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="btn btn-next"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Render the modal */}
+      {selectedListing && (
+        <RestaurantModal
+          show={showModal}
+          onHide={handleCloseModal}
+          restaurant={selectedListing}
+        />
       )}
     </div>
   );
