@@ -25,7 +25,7 @@ const HomePage = () => {
     // return <RestaurantSearch />;
   }
 
-  return null; // Since the user will be redirected, this component won't render anything here
+  return (<>This is Hoome Page</>); // Since the user will be redirected, this component won't render anything here
 };
 
 export default HomePage;

@@ -1,46 +1,30 @@
 import { userLogin, userRegister } from "../redux/features/auth/authActions";
 import store from "../redux/store";
 
-export const handleLogin = (e, email, password, role) => {
+export const handleLogin = async (e, email, password, role) => {
   e.preventDefault();
   try {
     if (!role || !email || !password) {
-      return alert("Please Provide All Fields");
+      toast.error("Please provide all fields");
+      return;
     }
-    store.dispatch(userLogin({ email, password, role }));
+    await store.dispatch(userLogin({ email, password, role }));
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    toast.error(error.message || "Login failed");
   }
 };
 
-export const handleRegister = (
-  e,
-  name,
-  role,
-  email,
-  password,
-  phone,
-  organizationName,
-  address,
-  hospitalName,
-  website
-) => {
+export const handleRegister = async (e, name, role, email, password, phone) => {
   e.preventDefault();
   try {
-    store.dispatch(
-      userRegister({
-        name,
-        role,
-        email,
-        password,
-        phone,
-        organizationName,
-        address,
-        hospitalName,
-        website,
-      })
-    );
+    if (!name || !email || !password || !phone || !role) {
+      toast.error("Please provide all fields");
+      return;
+    }
+    await store.dispatch(userRegister({ name, role, email, password, phone }));
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    toast.error(error.message || "Registration failed");
   }
 };
