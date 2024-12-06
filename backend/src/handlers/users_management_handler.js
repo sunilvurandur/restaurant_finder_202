@@ -140,6 +140,64 @@ class UsersManagementHander{
 
 
 
+    async searchRestaurants(req,query){
+        const { name, category, price_range, rating, latitude, longitude, radius } = query;
+
+    
+        try {
+            // Step 1: Fetch data from the database
+            const dbRestaurants = await req.app.get('models')['restaurants'].findAll({
+                where: {
+                    ...(name && { name: { [Op.iLike]: `%${name}%` } }),
+                    ...(category && { category: { [Op.contains]: [category] } }),
+                    ...(price_range && { price_range }),
+                    ...(rating && { rating: { [Op.gte]: rating } }),
+                }
+            });
+            console.log(dbRestaurants)
+    
+            // Step 2: Fetch data from Azure Maps API
+            const mapRestaurants = await maps.searchNearbyAzureMaps(latitude, longitude, radius || 5000);
+    
+            
+            // Filter Azure Maps results based on the provided criteria
+            const filteredMapRestaurants = mapRestaurants.filter((restaurant) => {
+                const matchesName = !name || restaurant.poi?.name?.toLowerCase().includes(name.toLowerCase());
+                const matchesCategory = !category || restaurant.poi?.categories?.includes(category);
+                const matchesPrice = !price_range || restaurant.poi?.priceCategory === price_range;
+    
+                // Combine all filters
+                return matchesName && matchesCategory && matchesPrice;
+            });
+    
+            // Step 3: Combine results from both sources
+            const combinedData = [...dbRestaurants, ...filteredMapRestaurants];
+    
+            return { data: combinedData };
+        } catch (error) {
+            console.error('Error searching restaurants:', error);
+            throw new Error('Failed to search restaurants.');
+        }
+    }
+
+    async search(req, res){
+    const { name, category, price_range, rating, latitude, longitude, radius } = req.query;
+
+    try {
+        const results = await this.searchRestaurants(req,{
+            name,
+            category,
+            price_range,
+            rating: parseFloat(rating),
+            latitude: parseFloat(latitude),
+            longitude: parseFloat(longitude),
+            radius: parseFloat(radius),
+        });
+        res.json(results);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }}
+
 }
 
 module.exports = UsersManagementHander;
