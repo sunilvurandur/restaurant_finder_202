@@ -6,7 +6,8 @@ import "../../../styles/Layout.css";
 
 
 const ViewListings = () => {
-  const currentUser = useSelector((state) => state.auth.user); // Get current user from Redux
+  // const currentUser = useSelector((state) => state.auth.user); // Get current user from Redux
+  const businessOwnerData = JSON.parse(localStorage.getItem("businessOwnerData"));
   const [listings, setListings] = useState([]);
   const [selectedListing, setSelectedListing] = useState(null); // Track the selected listing
   const [showModal, setShowModal] = useState(false); // Track modal visibility
@@ -15,22 +16,23 @@ const ViewListings = () => {
 
   // Fetch listings for the current user
   const getUserListings = async () => {
-    if (!currentUser?.id) return; // Ensure the user is authenticated
+    if (!businessOwnerData) return;
 
     try {
-      const { data } = await API.get(`/bussiness_owner/getRestaurants/${currentUser.id}`); // Fetch listings for the current user
-      if (data?.success) {
-        setListings(data.listings);
+      const { data } = await API.get(`/business-owner/getRestaurants/${businessOwnerData.owner.id}`);
+      if (data) {
+        setListings(data.listing);
       }
     } catch (error) {
       console.error("Error fetching user listings:", error);
-
+      
     }
   };
 
   useEffect(() => {
+    if(businessOwnerData)
     getUserListings();
-  }, [currentUser]);
+  }, []);
 
   // Calculate total pages
   const totalPages = Math.ceil(listings.length / listingsPerPage);

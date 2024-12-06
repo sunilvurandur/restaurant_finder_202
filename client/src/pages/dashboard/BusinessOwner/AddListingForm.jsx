@@ -3,7 +3,9 @@ import API from "../../../services/API";
 import ListingFormFields from "./ListingFormFields";
 
 const AddListingForm = () => {
+  const businessOwnerData = JSON.parse(localStorage.getItem("businessOwnerData"));
   const [formData, setFormData] = useState({
+    id:businessOwnerData.owner.id,
     name: "",
     address: "",
     contactInfo: "",
@@ -35,6 +37,7 @@ const AddListingForm = () => {
       const formDataToSend = new FormData();
   
       // Append all form fields
+      formDataToSend.append("id", formData.id);
       formDataToSend.append("name", formData.name);
       formDataToSend.append("address", formData.address);
       formDataToSend.append("contactInfo", formData.contactInfo);
@@ -60,7 +63,7 @@ const AddListingForm = () => {
         console.log(`${key}:`, value);
       }
   
-      const { data } = await API.post("/bussiness_owner/createRestaurant", formDataToSend, {
+      const { data } = await API.post("/business-owner/createRestaurant", formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -70,6 +73,7 @@ const AddListingForm = () => {
         alert("Listing added successfully!");
         // Reset form data
         setFormData({
+          id:businessOwnerData.owner.id,
           name: "",
           address: "",
           contactInfo: "",
