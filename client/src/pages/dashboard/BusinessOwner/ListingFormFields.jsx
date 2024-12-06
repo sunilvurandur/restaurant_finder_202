@@ -1,5 +1,6 @@
-import React from "react";
-import { Form, Row, Col, Carousel, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Form, Row, Col, Carousel, Button, Dropdown } from "react-bootstrap";
+import API from "../../../services/API"
 
 const ListingFormFields = ({
   formData,
@@ -8,10 +9,17 @@ const ListingFormFields = ({
   onSubmit,
   mode = "add",
 }) => {
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name.includes("_")) {
+    if (name === "address") {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+    else if (name.includes("_")) {
       const [day, timeOfDay] = name.split("_");
       setFormData((prevState) => ({
         ...prevState,
@@ -30,7 +38,40 @@ const ListingFormFields = ({
       });
     }
   };
+  const handleAddressSearch = async (query) => {
+    try {
+      console.log("search invoked");
+      
+      const response = await API.post("/users/searchAddress", {
+        address: query,
+      });
+      if (response.data) {
+        console.log("received data");
 
+        setSuggestions([response.data]);
+        setShowDropdown(true);
+      }
+    } catch (error) {
+      console.error("Error fetching address suggestions:", error);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent form submission
+      handleAddressSearch(formData.address);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setFormData({
+      ...formData,
+      address: suggestion.formattedAddress,
+      latitude: suggestion.latitude,
+      longitude: suggestion.longitude,
+    });
+    setShowDropdown(false);
+  };
   const handleCoverPhotoUpload = (e) => {
     const file = e.target.files[0];
     console.log(file);
@@ -97,15 +138,35 @@ const ListingFormFields = ({
       </Form.Group>
 
       {/* Address */}
-      <Form.Group controlId="address" className="mb-3">
+      <Form.Group controlId="address" className="mb-3" style={{ position: "relative" }}>
         <Form.Label>Address</Form.Label>
         <Form.Control
           type="text"
           name="address"
           value={formData.address}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           placeholder="Enter restaurant address"
         />
+        {showDropdown && suggestions.length > 0 && (
+          <Dropdown.Menu
+            show
+            style={{
+              position: "absolute",
+              zIndex: 10,
+              width: "100%",
+            }}
+          >
+            {suggestions.map((suggestion, index) => (
+              <Dropdown.Item
+                key={index}
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                {suggestion.formattedAddress}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        )}
       </Form.Group>
 
       {/* Description */}

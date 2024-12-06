@@ -3,6 +3,87 @@ import { useSelector } from "react-redux";
 import API from "../../../services/API";
 import ListingFormFields from "./ListingFormFields";
 
+const dummyListings = [
+  {
+    id: "dummy-1",
+    name: "The Gourmet Hub",
+    address: "190 Ryland Street, San Jose, CA 95110",
+    contactInfo: "(123) 456-7890",
+    description: "A paradise for food lovers offering a wide variety of cuisines.",
+    latitude: 37.3382, // San Jose coordinates
+    longitude: -121.8863,
+    hours: {
+      sunday: { opening: "10:00 AM", closing: "10:00 PM" },
+      monday: { opening: "9:00 AM", closing: "10:00 PM" },
+      tuesday: { opening: "9:00 AM", closing: "10:00 PM" },
+      wednesday: { opening: "9:00 AM", closing: "10:00 PM" },
+      thursday: { opening: "9:00 AM", closing: "10:00 PM" },
+      friday: { opening: "9:00 AM", closing: "11:00 PM" },
+      saturday: { opening: "10:00 AM", closing: "11:00 PM" },
+    },
+    photos: [
+      "https://via.placeholder.com/400",
+      "https://via.placeholder.com/500",
+      "https://via.placeholder.com/600",
+    ],
+    category: ["Italian", "Mexican", "Vegan"],
+    priceRange: "$$$",
+    coverPhoto: "https://via.placeholder.com/800x300",
+  },
+  {
+    id: "dummy-2",
+    name: "The BBQ Spot",
+    address: "110 W Main St, Inverness, FL 34450-4853",
+    contactInfo: "(987) 654-3210",
+    description: "The best BBQ in town with slow-smoked meats and tangy sauces.",
+    latitude: 28.8361, // Inverness, FL coordinates
+    longitude: -82.3452,
+    hours: {
+      sunday: { opening: "12:00 PM", closing: "8:00 PM" },
+      monday: { opening: "11:00 AM", closing: "9:00 PM" },
+      tuesday: { opening: "11:00 AM", closing: "9:00 PM" },
+      wednesday: { opening: "11:00 AM", closing: "9:00 PM" },
+      thursday: { opening: "11:00 AM", closing: "9:00 PM" },
+      friday: { opening: "11:00 AM", closing: "10:00 PM" },
+      saturday: { opening: "12:00 PM", closing: "10:00 PM" },
+    },
+    photos: [
+      "https://via.placeholder.com/450",
+      "https://via.placeholder.com/550",
+      "https://via.placeholder.com/650",
+    ],
+    category: ["BBQ", "American"],
+    priceRange: "$$",
+    coverPhoto: "https://via.placeholder.com/800x350",
+  },
+  {
+    id: "dummy-3",
+    name: "Sushi Paradise",
+    address: "789 Ocean Blvd, Seafood City, SF 67890",
+    contactInfo: "(555) 555-5555",
+    description: "Fresh sushi and sashimi prepared by master chefs.",
+    latitude: 37.7749, // San Francisco coordinates
+    longitude: -122.4194,
+    hours: {
+      sunday: { opening: "1:00 PM", closing: "9:00 PM" },
+      monday: { opening: "1:00 PM", closing: "9:00 PM" },
+      tuesday: { opening: "1:00 PM", closing: "9:00 PM" },
+      wednesday: { opening: "1:00 PM", closing: "9:00 PM" },
+      thursday: { opening: "1:00 PM", closing: "9:00 PM" },
+      friday: { opening: "1:00 PM", closing: "10:00 PM" },
+      saturday: { opening: "1:00 PM", closing: "10:00 PM" },
+    },
+    photos: [
+      "https://via.placeholder.com/480",
+      "https://via.placeholder.com/580",
+      "https://via.placeholder.com/680",
+    ],
+    category: ["Japanese", "Seafood"],
+    priceRange: "$$$$",
+    coverPhoto: "https://via.placeholder.com/800x400",
+  },
+];
+
 const UpdateListingForm = () => {
   const currentUser = useSelector((state) => state.auth.user);
   const [listings, setListings] = useState([]);
@@ -35,12 +116,13 @@ const UpdateListingForm = () => {
     if (!currentUser?.id) return;
 
     try {
-      const { data } = await API.get(`/get-user-listings/${currentUser.id}`);
+      const { data } = await API.get(`/bussiness_owner/getRestaurants/${currentUser.id}`);
       if (data?.success) {
         setListings(data.listings);
       }
     } catch (error) {
       console.error("Error fetching user listings:", error);
+      
     }
   };
 

@@ -47,7 +47,7 @@ const AddListingForm = () => {
       formDataToSend.append("category", serializedCategory);
       formDataToSend.append("priceRange", formData.priceRange);
       console.log (formDataToSend);
-      const { data } = await API.post("/add-listing", formDataToSend, {
+      const { data } = await API.post("/bussiness_owner/createRestaurant", formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
