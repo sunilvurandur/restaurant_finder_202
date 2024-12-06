@@ -146,7 +146,7 @@ class UsersManagementHander{
             // Step 1: Fetch data from the database
             const dbRestaurants = await req.app.get('models')['restaurants'].findAll({
                 where: {
-                    ...(name && { name: { [Op.iLike]: %${name}% } }),
+                    ...(name && { name: { [Op.iLike]: `%${name}%` } }),
                     ...(category && { category: { [Op.contains]: [category] } }),
                     ...(price_range && { price_range }),
                     ...(rating && { rating: { [Op.gte]: rating } }),
@@ -197,6 +197,53 @@ class UsersManagementHander{
     }}
 
 
+    async searchAddress(req, res){
+        try {
+            const {address} = req.body;
+            if(!address) return res.status(400).send({msg:"Invalid request"});
+            const results = await maps.searchAddressAzureMaps(address);
+            res.json({ data: results });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    async addReview(req, res){
+        const { username, user_id, review, rating, restaurant_id } = req.body;
+    
+        // Validate input
+        if (!username || !user_id || !review || !rating || !restaurant_id) {
+            return res.status(400).json({ error: 'All fields are required.' });
+        }
+    
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({ error: 'Rating must be between 1 and 5.' });
+        }
+    
+        try {
+            // Check if the restaurant exists
+            const restaurant = await models.restaurants.findByPk(restaurant_id);
+            if (!restaurant) {
+                return res.status(404).json({ error: 'Restaurant not found.' });
+            }
+    
+            // Add the review
+            const newReview = await models.reviews.create({
+                username,
+                user_id,
+                review,
+                rating,
+                restaurant_id,
+            });
+    
+            res.status(201).json({ message: 'Review added successfully.', data: newReview });
+        } catch (error) {
+            console.error('Error adding review:', error);
+            res.status(500).json({ error: 'Failed to add review.' });
+        }
+    };
+    
 
 
 

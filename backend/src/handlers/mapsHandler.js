@@ -19,7 +19,7 @@ class mapsHandler{
           const mapsAPIResponse = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
             params: {
               key: process.env.GOOGLE_MAPS_API_KEY,
-              location: ${latitude},${longitude},
+              location: `${latitude},${longitude}`,
               radius: 5000, // 5 km radius
               type: 'restaurant',
             },
@@ -36,7 +36,7 @@ class mapsHandler{
       
     async searchAzureMaps (req, res){
     const {name, category} = req.body;
-    const url = https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=${name || category}&subscription-key=${AZURE_MAPS_KEY};
+    const url = `https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=${name || category}&subscription-key=${AZURE_MAPS_KEY}`;
     const response = await axios.get(url);
     return response.data.results.map(item => ({
         name: item.poi.name,
@@ -77,6 +77,34 @@ async searchNearbyAzureMaps(latitude, longitude, radius){
     
 };
 
+
+async searchAddressAzureMaps(query) {
+  const subscriptionKey = AZURE_MAPS_KEY; // Ensure you have this in your .env file
+
+  try {
+      const response = await axios.get(
+          `https://atlas.microsoft.com/search/address/json`, 
+          {
+              params: {
+                  'subscription-key': subscriptionKey,
+                  'api-version': '1.0',
+                  query, // Address input from the user
+              }
+          }
+      );
+
+      const results = response.data.results.map((result) => ({
+          formattedAddress: result.address.freeformAddress,
+          latitude: result.position.lat,
+          longitude: result.position.lon,
+      }));
+
+      return results;
+  } catch (error) {
+      console.error('Error fetching addresses from Azure Maps:', error);
+      throw new Error('Failed to fetch addresses.');
+  }
+};
     
 }
 

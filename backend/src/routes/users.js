@@ -8,4 +8,7 @@ const users = new userHandler();
 router.post('/getRestaurants', (req, res) =>users.fetchRestaurants(req, res));
 router.post('/search',(req, res)=>users.search(req, res))
 
+router.post('/searchAddress',(req, res)=>users.searchAddress(req, res))
+router.post('/addReview', (req, res)=> users.addReview(req, res))
+
 module.exports = router;
