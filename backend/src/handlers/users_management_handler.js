@@ -2,6 +2,9 @@
 const mapsHandler = require('../handlers/mapsHandler');
 const maps = new mapsHandler();
 const { Op } = require('sequelize');
+const bcrypt = require('bcrypt');
+const { users } = require('../models');
+const sequelize = require('sequelize')
 
 class UsersManagementHander{
     constructor(){}
@@ -76,31 +79,37 @@ class UsersManagementHander{
         // Fetch restaurant data from the database within the specified radius
         const dbRestaurants = await this.fetchRestaurantsWithinRadius(req, latitude, longitude, radius);
 
-        // console.log(mapRestaurants);
-        // Merge Data: Combine data from both sources
-        // const combinedData = mapRestaurants.map(mapRestaurant => {
-        //     // Check if restaurant already exists in the database
-        //     const dbRestaurant = dbRestaurants.find(db => 
-        //         db?.name?.toLowerCase() === mapRestaurant.poi?.name?.toLowerCase()
-        //     );
-        //     // Combine data from both sources
-        //     return {
-        //         id: dbRestaurant.id || mapRestaurant.id, // Use DB id or generate a new UUID if not found
-        //         name: mapRestaurant.name,
-        //         address: mapRestaurant.address.freeformAddress || dbRestaurant?.address || 'Unknown Address',
-        //         latitude: mapRestaurant.position.lat.toString(),
-        //         longitude: mapRestaurant.position.lon.toString(),
-        //         category: mapRestaurant.poi.categories || dbRestaurant?.category || ['Restaurant'],
-        //         price_range: mapRestaurant.poi.priceCategory || dbRestaurant?.price_range || 'Medium',
-        //         hours: mapRestaurant.openingHours ? mapRestaurant.openingHours : dbRestaurant?.hours || {},
-        //         description: mapRestaurant.poi.name || dbRestaurant?.description || 'No Description',
-        //         coverPhoto: dbRestaurant?.coverPhoto || null,
-        //         photos: dbRestaurant?.photos || null,
-        //         createdAt: dbRestaurant?.createdAt || new Date().toISOString(),
-        //         updatedAt: dbRestaurant?.updatedAt || new Date().toISOString(),
-        //     };
-        // });
         const combinedData = [...dbRestaurants, ...mapRestaurants];
+
+        // Fetch reviews for database restaurants
+        const restaurantIds = combinedData.map(restaurant => restaurant.id);
+        console.log(restaurantIds)
+        const reviews = await req.app.get('models')['reviews'].findAll({
+            where: { restaurant_id: restaurantIds }
+        });
+
+        
+
+        // Group reviews by restaurant_id
+        const reviewsByRestaurantId = reviews.reduce((acc, review) => {
+            const { restaurant_id } = review;
+            if (!acc[restaurant_id]) acc[restaurant_id] = [];
+            acc[restaurant_id].push(review);
+            return acc;
+        }, {});
+
+        // console.log(reviewsByRestaurantId)
+        // Attach reviews and calculate average rating for dbRestaurants
+        combinedData.forEach(restaurant => {
+            const restaurantReviews = reviewsByRestaurantId[restaurant.id] || [];
+            restaurant.reviews = restaurantReviews;
+            restaurant.averageRating = this.calculateAverageRating(restaurantReviews);
+        });
+
+
+
+
+        // _____
 
         combinedData.forEach(restaurant => {
             const lat = parseFloat(restaurant.latitude);
@@ -112,13 +121,18 @@ class UsersManagementHander{
 
         return { data: combinedData };
     
-        return { data: combinedData };
     }
         catch(error){console.log(error)}
 
     };
     
     
+// Helper function to calculate average rating
+calculateAverageRating(reviews){
+    if (!reviews || reviews.length === 0) return 0;
+    const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return totalRating / reviews.length;
+};
 
     async fetchRestaurants(req, res){
         try{
@@ -223,13 +237,13 @@ class UsersManagementHander{
     
         try {
             // Check if the restaurant exists
-            const restaurant = await models.restaurants.findByPk(restaurant_id);
-            if (!restaurant) {
-                return res.status(404).json({ error: 'Restaurant not found.' });
-            }
+            // const restaurant = await req.app.get('models')['restaurants'].findByPk(restaurant_id);
+            // if (!restaurant) {
+            //     return res.status(404).json({ error: 'Restaurant not found.' });
+            // }
     
             // Add the review
-            const newReview = await models.reviews.create({
+            const newReview = await req.app.get('models')['reviews'].create({
                 username,
                 user_id,
                 review,
@@ -246,7 +260,142 @@ class UsersManagementHander{
     
 
 
+    
+    async register(req, res) {
+        const { firstname, lastname, email, password } = req.body;
+    
+        try {
+            // Check if the email already exists
+            const existingUser = await req.app.get('models')['users'].findOne({ where: { email } });
+            if (existingUser) {
+                return res.status(400).json({ error: 'Email already exists' });
+            }
+    
+            // Hash the password
+            const saltRounds = 10;
+            const password_hash = await bcrypt.hash(password, saltRounds);
+    
+            // Create new user
+            const newUser = await req.app.get('models')['users'].create({
+                firstname,
+                lastname,
+                email,
+                password_hash,
+            });
+    
+            return res.status(201).json({ message: 'User registered successfully', user: { id: newUser.id, email: newUser.email } });
+        } catch (error) {
+            console.error('Error during registration:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+    
 
+    async login(req, res) {
+        const { email, password } = req.body;
+    
+        try {
+            // Check if the user exists
+            const user = await req.app.get('models')['users'].findOne({ where: { email } });
+            if (!user) {
+                return res.status(400).json({ error: 'Invalid email or password' });
+            }
+    
+            // Compare the password
+            const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+            if (!isPasswordValid) {
+                return res.status(400).json({ error: 'Invalid email or password' });
+            }
+
+
+    
+            return res.status(200).json({ message: 'Login successful', user });
+        } catch (error) {
+            console.error('Error during login:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+
+
+
+    /**
+     * Admin functionality
+     */
+
+    async shutdownBusinessOwner(req, res) {
+        const { id } = req.body;
+    
+        try {
+            const owner = await req.app.get('models')['business_owners'].findOne({ where: { id } });
+    
+            if (!owner) {
+                return res.status(404).json({ error: 'Business owner not found' });
+            }
+    
+            // Update status to false
+            owner.status = false;
+            await req.app.get('models')['business_owners'].update(
+                { status: false }, // Update object
+                { where: { id: id } } // Condition
+            );
+    
+            return res.status(200).json({ message: 'Business owner status updated to false' });
+        } catch (error) {
+            console.error('Error shutting down business owner:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+
+
+
+    //duplicate listing
+    async checkDuplicateListings(req, res) {
+        try {
+            const duplicates = await req.app.get('models')['restaurants'].findAll({
+                attributes: ['name', 'address', [sequelize.fn('COUNT', sequelize.col('id')), 'count']],
+                group: ['name', 'address'],
+                having: sequelize.literal('COUNT(id) > 1'),
+            });
+    
+            if (!duplicates.length) {
+                return res.status(200).json({ message: 'No duplicate listings found' });
+            }
+    
+            return res.status(200).json({ duplicates });
+        } catch (error) {
+            console.error('Error checking duplicate listings:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+
+    async removeRestaurantsByOwner(req, res) {
+        const { ownerId } = req.body;
+    
+        try {
+            // Check if business owner exists
+            const owner = await business_owners.findByPk(ownerId);
+    
+            if (!owner) {
+                return res.status(404).json({ error: 'Business owner not found' });
+            }
+    
+            // Check if the owner's status is false
+            if (owner.status !== false) {
+                return res.status(400).json({ error: 'Cannot remove restaurants. Business owner is still active.' });
+            }
+    
+            // Remove all restaurants owned by this business owner
+            await restaurants.destroy({ where: { ownerId } });
+    
+            return res.status(200).json({ message: 'All restaurants for the business owner have been removed' });
+        } catch (error) {
+            console.error('Error removing restaurants:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
 }
 
 module.exports = UsersManagementHander;

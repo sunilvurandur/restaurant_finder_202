@@ -63,7 +63,7 @@ class businessOwnerHandler{
 
             // Generate a JWT token
             const token = jwt.sign(
-            { id: owner.owner_id, email: owner.email },
+            { id: owner.id, email: owner.email },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
             );
@@ -71,8 +71,8 @@ class businessOwnerHandler{
             return res.status(200).json({
             message: 'Login successful.',
             token,
-            owner: { id: owner.owner_id, name: owner.name, email: owner.email},
-            });
+
+            owner: { id: owner.id, name: owner.name, email: owner.email },});
         } catch (error) {
             console.error(error);
             return res.status(500).json({ error: 'Internal server error.' });

@@ -14,18 +14,28 @@ app.use(cors({
 app.use(express.json())
 const { models,sequelize, initializeDatabase } = require('./models');
 app.set('models', models)
+const cors = require('cors');
+app.use(cors());
 
 
+
+app.use(cors({
+    origin: '*', // Allow all origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+}));
 
 
 //importing routesd
 require('./routes/routes')(app,router)
 const businessRoutes = require('./routes/business_owner_routes')
 const userRoutes = require('./routes/users')
+const adminRoutes = require('./routes/admin')
 app.use('/',router);
 
-app.use('/bussiness_owner', businessRoutes)
-app.use('/users',userRoutes)
+app.use('/business-owner', businessRoutes)
+app.use('/users', userRoutes)
+app.use('/admin', adminRoutes)
 app.use
 app.get('/health',(req,res)=>{
     res.send({"msg": "Applicaiton is working !!" ,  "date" : `${new Date()}`})
@@ -53,6 +63,6 @@ const startServer = async () => {
 
 startServer();
 // running the server
-app.listen(process.env.PORT || 3000, () => {
+app.listen(process.env.PORT || 3000, '0.0.0.0',() => {
     console.log(`Server is running on http://localhost:${process.env.PORT}`);
 });
