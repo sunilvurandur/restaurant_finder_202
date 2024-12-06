@@ -170,7 +170,7 @@ const UpdateListingForm = () => {
         throw new Error("No listing selected for update.");
       }
 
-      const { data } = await API.put(`/update-listing/${selectedListing.id}`, formDataToSend, {
+      const { data } = await API.put(`/business-owner/update-listing/${selectedListing.id}`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -266,13 +266,13 @@ const UpdateListingForm = () => {
               loading={loading}
               mode="update"
             />
-            {/* <button
+            <button
               type="submit"
               className="btn btn-primary"
               disabled={loading}
             >
               {loading ? "Updating..." : "Update Listing"}
-            </button> */}
+            </button>
           </form>
           <button
             type="button"

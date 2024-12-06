@@ -19,7 +19,7 @@ export const userLogin = createAsyncThunk(
           window.location.replace("/business-owner-dashboard");
         }
         else if(data.user.id == 1){
-          localStorage.setItem("businessOwnerData", JSON.stringify(data));
+          localStorage.setItem("adminData", JSON.stringify(data));
           window.location.replace("/admin-dashboard");
         }
       }

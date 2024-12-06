@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = axios.create({ baseURL: "http://localhost:8080/" });
+const API = axios.create({ baseURL: "https://restaurantfinder202-edqhq4gnm-mahesh-cheekuris-projects.vercel.app/" });
 
 API.interceptors.request.use((req) => {
   if (localStorage.getItem("token")) {
