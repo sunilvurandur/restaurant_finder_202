@@ -5,8 +5,16 @@ const router = express.Router();
 app.use(express.json())
 const { models,sequelize, initializeDatabase } = require('./models');
 app.set('models', models)
+const cors = require('cors');
+app.use(cors());
 
 
+
+app.use(cors({
+    origin: '*', // Allow all origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+}));
 
 
 //importing routesd
@@ -15,7 +23,7 @@ const businessRoutes = require('./routes/business_owner_routes')
 const userRoutes = require('./routes/users')
 app.use('/',router);
 
-app.use('/bussiness_owner', businessRoutes)
+app.use('/business-owner', businessRoutes)
 app.use('/users',userRoutes)
 app.use
 app.get('/health',(req,res)=>{

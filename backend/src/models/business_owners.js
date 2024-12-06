@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.ARRAY(DataTypes.STRING), // Array of integers for restaurant IDs
           allowNull: true,
         },
+        status: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: true, // Default is active (true)
+        },
       },{});
   
     return Restaurant;
