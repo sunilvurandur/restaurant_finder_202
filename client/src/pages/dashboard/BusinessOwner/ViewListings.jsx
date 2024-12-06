@@ -15,7 +15,7 @@ const ViewListings = () => {
     if (!currentUser?.id) return; // Ensure the user is authenticated
 
     try {
-      const { data } = await API.get(`/listings?ownerId=${currentUser.id}`); // Fetch listings for the current user
+      const { data } = await API.get(`/get-user-listings/${currentUser.id}`); // Fetch listings for the current user
       if (data?.success) {
         setListings(data.listings);
       }
