@@ -11,6 +11,39 @@ const AZURE_MAPS_KEY = 'BONxG1YLyar4VokhBnTC5Rq0slEmh5ZhXNukOPW9SPmWgxSeMz52JQQJ
 class mapsHandler{
     constructor(){}
 
+    async getRestaurantsByLocation(req, res){
+        try {
+          const { latitude, longitude } = req.body;
+      
+          const mapsAPIResponse = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
+            params: {
+              key: process.env.GOOGLE_MAPS_API_KEY,
+              location: `${latitude},${longitude}`,
+              radius: 5000, // 5 km radius
+              type: 'restaurant',
+            },
+          });
+      
+          res.status(200).json(mapsAPIResponse.data.results);
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: 'Error fetching nearby restaurants', error });
+        }
+      };
+
+
+      
+async searchAzureMaps (req, res){
+    const {name, category} = req.body;
+    const url = `https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=${name || category}&subscription-key=${AZURE_MAPS_KEY}`;
+    const response = await axios.get(url);
+    return response.data.results.map(item => ({
+        name: item.poi.name,
+        address: item.address.freeformAddress,
+        position: item.position,
+    }));
+};
+
 async searchNearbyAzureMaps(latitude, longitude, radius){
     try {
         // const {latitude, longitude, radius} =  req.body
