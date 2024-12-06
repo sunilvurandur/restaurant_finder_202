@@ -89,7 +89,7 @@ class businessOwnerHandler{
             category,
             cuisine_type,
             price_range,
-            business_owner_id,
+            id,
             hours,
             description
           } = req.body;
@@ -103,7 +103,7 @@ class businessOwnerHandler{
             // }
         
             let BusinessOwner = req.app.get('models')['business_owners']
-            const businessOwner = await BusinessOwner.findOne({ where: { id: business_owner_id} });
+            const businessOwner = await BusinessOwner.findOne({ where: { id: id} });
             if (!businessOwner) {
               return res.status(404).json({ error: 'Business owner not found' });
             }
