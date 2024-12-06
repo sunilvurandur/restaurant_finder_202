@@ -119,7 +119,11 @@ const UpdateListingForm = () => {
       formDataToSend.append("category", formData.category);
       formDataToSend.append("priceRange", formData.priceRange);
 
-      const { data } = await API.put(`/update-listing/${selectedListing.id}`, formDataToSend);
+      const { data } = await API.put(`/update-listing/${selectedListing.id}`, formDataToSend,{
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       if (data?.success) {
         alert("Listing updated successfully!");
         const updatedListings = listings.map((listing) =>

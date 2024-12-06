@@ -49,7 +49,11 @@ const AddListingForm = () => {
       formDataToSend.append("category", formData.category);
       formDataToSend.append("priceRange", formData.priceRange);
       console.log (formDataToSend);
-      const { data } = await API.post("/add-listing", formDataToSend);
+      const { data } = await API.post("/add-listing", formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       if (data?.success) {
         alert("Listing added successfully!");
         setFormData({
