@@ -40,19 +40,20 @@ const ListingFormFields = ({
   };
   const handleAddressSearch = async (query) => {
     try {
-      console.log("search invoked");
-      
       const response = await API.post("/users/searchAddress", {
         address: query,
       });
-      if (response.data) {
-        console.log("received data");
-
-        setSuggestions([response.data]);
+      if (response.data && response.data.data.length > 0) {
+        setSuggestions(response.data.data);
         setShowDropdown(true);
+      } else {
+        setSuggestions([]);
+        setShowDropdown(false);
       }
     } catch (error) {
       console.error("Error fetching address suggestions:", error);
+      setSuggestions([]);
+      setShowDropdown(false);
     }
   };
 

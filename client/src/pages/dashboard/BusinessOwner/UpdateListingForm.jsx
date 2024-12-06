@@ -106,6 +106,8 @@ const UpdateListingForm = () => {
     category: [],
     priceRange: "",
     coverPhoto: null,
+    latitude:"",
+    longitude:"",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -158,6 +160,8 @@ const UpdateListingForm = () => {
       category: listing.category || [],
       priceRange: listing.priceRange || "",
       coverPhoto: listing.coverPhoto || null,
+      latitude:"",
+      longitude:"",
     });
   };
 
@@ -197,6 +201,8 @@ const UpdateListingForm = () => {
       formDataToSend.append("hours", serializedHours);
       formDataToSend.append("category", serializedCategory);
       formDataToSend.append("priceRange", formData.priceRange);
+      formDataToSend.append("latitude", formData.latitude);
+      formDataToSend.append("longitude", formData.longitude);
 
       const { data } = await API.put(`/update-listing/${selectedListing.id}`, formDataToSend,{
         headers: {

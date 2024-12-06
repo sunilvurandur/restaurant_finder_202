@@ -35,8 +35,8 @@ const RestaurantModal = ({ show, onHide, restaurant, currentLocation }) => {
     priceRange = "",
     coverPhoto = null,
     reviews = [], // assume we get reviews array here for demonstration
-    lat = 37.3382,
-    lng = -121.8863,
+    latitude = 37.3382,
+    longitude = -121.8863,
     photos = [],
   } = restaurant || {};
 
@@ -137,7 +137,7 @@ const RestaurantModal = ({ show, onHide, restaurant, currentLocation }) => {
             <h5>Location</h5>
             <div style={{ width: '100%', height: '300px' }}>
               <MapContainer 
-                center={[lat, lng]} 
+                center={[latitude, longitude]} 
                 zoom={14} 
                 style={{ width: '100%', height: '100%' }}
                 scrollWheelZoom={false}
@@ -146,7 +146,7 @@ const RestaurantModal = ({ show, onHide, restaurant, currentLocation }) => {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
-                <Marker position={[lat, lng]}>
+                <Marker position={[latitude, longitude]}>
                   <Popup>{name}</Popup>
                 </Marker>
               </MapContainer>

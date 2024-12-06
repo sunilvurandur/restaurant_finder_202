@@ -21,6 +21,8 @@ const AddListingForm = () => {
     category: [],
     priceRange: "",
     coverPhoto: null,
+    latitude: "",
+    longitude: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -28,32 +30,45 @@ const AddListingForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     try {
       const formDataToSend = new FormData();
-      const serializedHours = JSON.stringify(formData.hours);
-      const serializedCategory = JSON.stringify(formData.category);
-
-      formData.photos.forEach((photo) => formDataToSend.append("photos", photo));
-      if (formData.coverPhoto) {
-        formDataToSend.append("coverPhoto", formData.coverPhoto);
-      }
-
+  
+      // Append all form fields
       formDataToSend.append("name", formData.name);
       formDataToSend.append("address", formData.address);
       formDataToSend.append("contactInfo", formData.contactInfo);
       formDataToSend.append("description", formData.description);
-      formDataToSend.append("hours", serializedHours);
-      formDataToSend.append("category", serializedCategory);
+      formDataToSend.append("hours", JSON.stringify(formData.hours));
+      formDataToSend.append("category", JSON.stringify(formData.category));
       formDataToSend.append("priceRange", formData.priceRange);
-      console.log (formDataToSend);
+      formDataToSend.append("latitude", formData.latitude);
+      formDataToSend.append("longitude", formData.longitude);
+  
+      // Append photos
+      formData.photos.forEach((photo) => {
+        formDataToSend.append("photos", photo);
+      });
+  
+      // Append cover photo
+      if (formData.coverPhoto) {
+        formDataToSend.append("coverPhoto", formData.coverPhoto);
+      }
+  
+      // Log FormData contents for debugging
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(`${key}:`, value);
+      }
+  
       const { data } = await API.post("/bussiness_owner/createRestaurant", formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+  
       if (data?.success) {
         alert("Listing added successfully!");
+        // Reset form data
         setFormData({
           name: "",
           address: "",
@@ -72,11 +87,13 @@ const AddListingForm = () => {
           category: [],
           priceRange: "",
           coverPhoto: null,
+          latitude: "",
+          longitude: "",
         });
       }
     } catch (error) {
-      console.error("Error submitting form data:", error);
-      alert("")
+      console.error("Error submitting form data:", error.response || error);
+      alert(error.response?.data?.message || "An error occurred");
     } finally {
       setLoading(false);
     }
