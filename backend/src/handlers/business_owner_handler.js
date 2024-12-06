@@ -32,7 +32,7 @@ class businessOwnerHandler{
         
             return res.status(201).json({
               message: 'Business owner registered successfully.',
-              data: { id: newOwner.id, name: newOwner.name, email: newOwner.email },
+              data: { id: newOwner.id, name: newOwner.name, email: newOwner.email, role:"businessOwner" },
             });
           } catch (error) {
             console.error(error);
@@ -71,7 +71,7 @@ class businessOwnerHandler{
             return res.status(200).json({
             message: 'Login successful.',
             token,
-            owner: { id: owner.owner_id, name: owner.name, email: owner.email },
+            owner: { id: owner.owner_id, name: owner.name, email: owner.email, role: " businessOwner"},
             });
         } catch (error) {
             console.error(error);
