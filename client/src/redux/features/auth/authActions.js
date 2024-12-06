@@ -1,19 +1,22 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import API from "../../../services/API";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export const userLogin = createAsyncThunk(
+
   "auth/login",
   async ({ role, email, password }, { rejectWithValue }) => {
     try {
       
-      const endpoint = role === "businessOwner" ? "/bussiness_owner/login" : "/users/login";
+      const endpoint = role === "businessOwner" ? "/business-owner/login" : "/users/login";
       const { data } = await API.post(endpoint, { email, password });
       
       if (data.message == "Login successful.") {
-        localStorage.setItem("token", data.token);
-        toast.success(data.message);
-        window.location.replace("/");
+        if(role === "businessOwner"){
+          localStorage.setItem("businessOwnerData", JSON.stringify(data));
+          window.location.replace("/business-owner-dashboard");
+        }
       }
       return data;
     } catch (error) {
@@ -27,7 +30,7 @@ export const userRegister = createAsyncThunk(
   async ({ name, role, email, password, phone }, { rejectWithValue }) => {
     try {
       
-      const endpoint = role === "businessOwner" ? "/bussiness_owner/register" : "/users/register";
+      const endpoint = role === "businessOwner" ? "/business-owner/register" : "/users/register";
       const { data } = await API.post(endpoint, { name, email, password, phone });
       
       if (data.message == "Business owner registered successfully.") {

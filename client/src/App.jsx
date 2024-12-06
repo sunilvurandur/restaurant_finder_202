@@ -15,40 +15,34 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <PublicRoute>
         <HomePage />
-      </PublicRoute>
     ),
   },  
   {
     path: "/business-owner-dashboard",
-    element :(<PublicRoute><BusinessOwnerDashboard/></PublicRoute>),
+    element :(<BusinessOwnerDashboard/>),
   },{
     path: "/admin-dashboard",
-    element :(<PublicRoute><AdminDashboardApp/></PublicRoute>),
+    element :(<AdminDashboardApp/>),
   },
   {
     path: "/login",
     element: (
-      <PublicRoute>
+      
         <Login />
-      </PublicRoute>
+      
     ),
   },
   {
     path: "/register",
     element: (
-      <PublicRoute>
         <Register />
-      </PublicRoute>
     ),
   },
   {
     path: "/admin/login",
     element: (
-      <PublicRoute>
         <AdminLogin />
-      </PublicRoute>
     ),
   },
 

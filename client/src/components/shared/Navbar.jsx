@@ -6,7 +6,8 @@ import { useSelector } from "react-redux";
 import banner1 from "../../assets/banner1.jpg";
 
 const Navbar = () => {
-  const { user } = useSelector((state) => state.auth);
+  // const { user } = useSelector((state) => state.auth);
+  const businessOwnerData = JSON.parse(localStorage.getItem("businessOwnerData"));
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -23,9 +24,9 @@ const Navbar = () => {
       <div className="navbar-center">
         <p className="nav-link">
           <BiUserCircle /> Welcome{" "}
-          {user?.name || user?.businessOwnerName || user?.admin}
+          {businessOwnerData.owner.name}
           &nbsp;
-          <span className="badge bg-secondary">{user?.role}</span>
+          {/* <span className="badge bg-secondary">{"businessOwner"}</span> */}
         </p>
       </div>
       <div className="navbar-logout">

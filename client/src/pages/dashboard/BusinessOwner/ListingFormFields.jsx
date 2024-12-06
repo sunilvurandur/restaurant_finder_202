@@ -9,6 +9,7 @@ const ListingFormFields = ({
   onSubmit,
   mode = "add",
 }) => {
+  
   const [suggestions, setSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const handleChange = (e) => {
@@ -48,6 +49,8 @@ const ListingFormFields = ({
         setShowDropdown(true);
       } else {
         setSuggestions([]);
+
+
         setShowDropdown(false);
       }
     } catch (error) {
