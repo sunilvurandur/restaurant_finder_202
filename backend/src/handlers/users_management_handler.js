@@ -146,7 +146,7 @@ class UsersManagementHander{
             // Step 1: Fetch data from the database
             const dbRestaurants = await req.app.get('models')['restaurants'].findAll({
                 where: {
-                    ...(name && { name: { [Op.iLike]: %${name}% } }),
+                    ...(name && { name: { [Op.iLike]: `%${name}%` } }),
                     ...(category && { category: { [Op.contains]: [category] } }),
                     ...(price_range && { price_range }),
                     ...(rating && { rating: { [Op.gte]: rating } }),

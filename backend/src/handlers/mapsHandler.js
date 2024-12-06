@@ -19,7 +19,7 @@ class mapsHandler{
           const mapsAPIResponse = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
             params: {
               key: process.env.GOOGLE_MAPS_API_KEY,
-              location: ${latitude},${longitude},
+              location: `${latitude},${longitude}`,
               radius: 5000, // 5 km radius
               type: 'restaurant',
             },
@@ -36,7 +36,7 @@ class mapsHandler{
       
     async searchAzureMaps (req, res){
     const {name, category} = req.body;
-    const url = https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=${name || category}&subscription-key=${AZURE_MAPS_KEY};
+    const url = `https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query=${name || category}&subscription-key=${AZURE_MAPS_KEY}`;
     const response = await axios.get(url);
     return response.data.results.map(item => ({
         name: item.poi.name,
