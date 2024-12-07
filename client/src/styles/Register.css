@@ -1,0 +1,107 @@
+/* General container */
+.register-container {
+    display: flex;
+    height: 100vh;
+    font-family: "Arial", sans-serif;
+  }
+  
+  .register-wrapper {
+    display: flex;
+    width: 100%;
+  }
+  
+  /* Left side: Banner */
+  .register-banner {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    padding: 20px;
+  }
+  
+  .register-image {
+    max-width: 80%;
+    height: auto;
+    border-radius: 10px;
+  }
+  
+  /* Right side: Form */
+  .register-form-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    background: #f9f9f9;
+  }
+  
+  .register-form-container h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e3a8a;
+    margin-bottom: 20px;
+  }
+  
+  .register-form-container .btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #2563eb;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .register-form-container .btn:hover {
+    background-color: #1e3a8a;
+  }
+  
+  /* Input fields */
+  .register-form-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  .register-form-container input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 4px rgba(37, 99, 235, 0.4);
+  }
+  
+  /* Link styles */
+  .register-form-container a {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  
+  .register-form-container a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .register-wrapper {
+      flex-direction: column;
+    }
+  
+    .register-banner,
+    .register-form-container {
+      flex: none;
+      width: 100%;
+    }
+  
+    .register-banner {
+      display: none; /* Optional: Hide the banner on smaller screens */
+    }
+  }
+  

@@ -1,0 +1,345 @@
+/* Sidebar Styling */
+.sidebar {
+    height: 100vh;
+    background-color: #2e3200;
+    box-shadow: 0 0 2px gray;
+    color: white;
+  }
+  
+  .menu {
+    padding-top: 80px;
+  }
+  
+  .menu-item {
+    margin-bottom: 20px;
+  }
+  
+  .menu-item a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .menu-item i {
+    font-size: 1.2rem;
+    margin-right: 10px;
+  }
+  
+  .menu-item a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #c7d92d;
+  }
+  
+  .active {
+    background-color: white;
+    padding: 10px;
+    margin-top: 25px;
+    border-radius: 4px;
+  }
+  
+  .active a,
+  .active i {
+    color: #2e3200;
+  }
+  
+  .btn.btn-danger{
+    
+  }
+  
+  .btn.btn-danger:hover {
+    background-color: darkred;
+    transform: scale(1.05);
+  }
+  
+  /* Admin Dashboard Layout */
+  .admin-dashboard {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .admin-sidebar {
+    width: 250px;
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex-shrink: 0;
+  }
+  
+  .admin-sidebar h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+  }
+  
+  .admin-sidebar button {
+    background: transparent;
+    color: #ecf0f1;
+    border: none;
+    padding: 10px 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+  }
+  
+  .admin-sidebar button:hover {
+    background: rgba(236, 240, 241, 0.1);
+  }
+  
+  .admin-sidebar button.active {
+    background: #3498db;
+    border-radius: 4px;
+    color: white;
+  }
+  
+  /* Main Content Area */
+  .admin-main {
+    flex: 1;
+    padding: 20px;
+    background: #f9f9f9;
+    overflow-y: auto;
+  }
+  
+  /* Search Bar */
+  .search-bar {
+    margin-bottom: 20px;
+  }
+  
+  .search-bar input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  
+  .search-bar input:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 4px rgba(37, 99, 235, 0.2);
+  }
+  
+  /* Listings Grid Layout */
+  .listing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  /* Listing Card Styling */
+  .listing-card {
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    padding: 20px;
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  
+  .listing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .listing-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .listing-card p {
+    font-size: 1rem;
+    color: #666;
+    margin: 5px 0;
+  }
+  
+  .listing-card button {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .listing-card button:hover {
+    background-color: #1e3a8a;
+  }
+  
+  /* Image Previews */
+  .image-previews {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .image-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .image-preview button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    text-align: center;
+    line-height: 24px;
+    cursor: pointer;
+  }
+  
+  /* Footer */
+  .footer {
+    text-align: center;
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 15px 0;
+    font-size: 0.9rem;
+  }
+  
+ 
+  /* Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 10px 0;
+  }
+  
+  .pagination .btn {
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+  }
+  
+  .pagination .btn-previous {
+    background-color: #d1d5db;
+    color: white;
+  }
+  
+  .pagination .btn-next {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .pagination .btn:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+  
+  .pagination .btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+  }
+  
+  .pagination span {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .listing-grid {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  
+    .admin-sidebar {
+      width: 200px;
+    }
+  
+    .search-bar input {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .listing-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .menu-item a {
+      font-size: 1rem;
+    }
+  }
+
+  /*nav bar*/
+  /* Layout.css */
+
+.navbar {
+  display: flex;
+  justify-content: space-between; /* This will space out the elements */
+  align-items: center; /* This will vertically center the items */
+  padding: 10px 20px;
+  background-color: #fff; /* Set your preferred navbar background color */
+  border-bottom: 2px solid #ddd;
+}
+
+.navbar-logo img {
+  height: 50px; /* Adjust the logo size as needed */
+  width: auto;
+}
+
+.navbar-center {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1; /* Ensures it takes up the available space and centers the content */
+}
+
+.navbar-logout {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.nav-link .badge {
+  margin-left: 10px;
+}
+
+.btn-danger {
+  padding: 5px 10px;
+  background-color: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background-color: darkred;
+}
+  

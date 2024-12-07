@@ -1,0 +1,147 @@
+body {
+    font-family: "Arial", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url("https://t4.ftcdn.net/jpg/05/62/17/79/360_F_562177976_dH3SgNcJBPjkvonJIyBvemkNCvPfOEKB.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #333;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+    color: #fff;
+  }
+  
+  .search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .filter-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .filter-section {
+    flex: 1;
+    margin: 0 10px;
+  }
+  
+  .filter-section h3 {
+    margin-bottom: 10px;
+    color: #007bff;
+  }
+  
+  .filter-section label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .btn {
+    background: #007bff;
+    color: #fff;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .btn:hover {
+    background: #0056b3;
+  }
+  
+  .restaurant-list {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .restaurant-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+  }
+  
+  .restaurant-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .restaurant-card h2 {
+    margin: 0 0 10px;
+    color: #007bff;
+  }
+  
+  .restaurant-card p {
+    margin: 5px 0;
+    color: #555;
+  }
+  
+  /* Leaflet Map Styling */
+  .leaflet-container {
+    height: 500px; /* Height of the map container */
+    width: 100%; /* Full width of the parent container */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  .leaflet-control-attribution {
+    font-size: 0.8rem;
+    color: #555;
+  }
+  
+  .leaflet-popup-content-wrapper {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .leaflet-popup-content h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #007bff;
+  }
+  
+  .leaflet-popup-content p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .map-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  
