@@ -1,22 +1,23 @@
+// AdminDashboard.jsx
 import React, { useState } from "react";
 import ListingCard from "./ListingCard";
 import "../../../styles/Layout.css";
 import Navbar from "../../../components/shared/Navbar";
 import Footer from "../../../components/shared/Footer";
 
-const AdminDashboard = ({ listings, onDelete, onFindDuplicates }) => {
+const AdminDashboard = ({ listings = [], onDelete, onFindDuplicates }) => { // Default to empty array
   const [activeTab, setActiveTab] = useState("view");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const listingsPerPage = 4;
 
   // Filter listings based on search query
-  const filteredListings = listings.filter((listing) =>
+  const filteredListings = Array.isArray(listings) ? listings.filter((listing) =>
     [listing.name, listing.address, listing.ownerName]
       .join(" ")
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
-  );
+  ) : [];
 
   // Pagination logic
   const totalPages = Math.ceil(filteredListings.length / listingsPerPage);
@@ -61,10 +62,10 @@ const AdminDashboard = ({ listings, onDelete, onFindDuplicates }) => {
               <div className="listing-grid">
                 {duplicates.map((listing, index) => (
                   <ListingCard
-                    key={listing.id + "-" + index}
+                    key={`${listing.id}-${index}`} // Unique key
                     listing={listing}
                     onDelete={onDelete}
-                    highlight
+                    highlight // Prop to highlight duplicates
                   />
                 ))}
               </div>
