@@ -33,7 +33,7 @@ const ViewListings = () => {
       console.log("API Response:", response);
 
       // Ensure that data.lisiting exists and is an array
-      const fetchedListings = Array.isArray(response.data.lisiting) ? response.data.lisiting : [];
+      const fetchedListings = Array.isArray(response.data.listing) ? response.data.listing : [];
       
       // Debugging: Log the fetched listings
       console.log("Fetched Listings:", fetchedListings);
