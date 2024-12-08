@@ -177,7 +177,7 @@ class businessOwnerHandler{
 
             res.status(200).json({
                 message: `Restaurants for Business Owner ID: ${business_owner_id}`,
-                lisiting: restaurants,
+                listing: restaurants,
             });
         } catch (error) {
             console.error('Error fetching restaurants:', error);
@@ -186,48 +186,54 @@ class businessOwnerHandler{
     }
 
     async updatedRestaurant(req, res){
-        console.log('coming here')
-        const Restaurant = req.app.get('models')['restaurants'];
-        const restaurantId = req.body.id;
-        const { name, address, hours,category, description,price_range,latitude, longitude } = req.body;
-        let photoUrl = null;
-        let hoursjson;
-        if(hours) {hoursjson = JSON.parse(hours)}
-        try {
-          // Find restaurant by ID
-          const restaurant = await Restaurant.findOne({
-            where: { id: restaurantId }
-          });
-      
-          if (!restaurant) {
-            return res.status(404).json({ error: 'Restaurant not found or you are not the owner' });
-          }
-      
-          // Check if a new photo is uploaded and upload it to GitHub (or a file storage service)
-          if (req.file) {
-            const fileName = `${Date.now()}_${req.file.originalname}`;
-            photoUrl = await uploadToGitHub(req.file.buffer, fileName);
-          }
-      
-          // Update restaurant details
-          const updatedRestaurant = await restaurant.update({
-            name: name || restaurant.name,
-            address: address || restaurant.address,
-            hours: hoursjson || restaurant.hours,
-            description: description || restaurant.description,
-            price_range: price_range || restaurant.price_range,
-            latitude: latitude || restaurant.latitude,
-            longitude: longitude || restaurant.longitude
-          });
-      
-          res.status(200).json({
-            message: 'Restaurant updated successfully',
-            restaurant: updatedRestaurant,
-          });
-        } catch (error) {
-          console.error('Error updating restaurant:', error);
-          res.status(500).json({ error: 'Failed to update restaurant' });
-        } 
-}
-}
+      console.log('coming here')
+      const Restaurant = req.app.get('models')['restaurants'];
+      const restaurantId = req.params.id; // Changed from req.body.id to req.params.id
+      const { name, address, hours, category, description, price_range, latitude, longitude } = req.body;
+      let photoUrl = null;
+      let hoursjson;
+      if(hours) {hoursjson = JSON.parse(hours)}
+      try {
+        // Find restaurant by ID
+        const restaurant = await Restaurant.findOne({
+          where: { id: restaurantId }
+        });
+    
+        if (!restaurant) {
+          return res.status(404).json({ error: 'Restaurant not found or you are not the owner' });
+        }
+    
+        // Check if a new photo is uploaded and upload it to GitHub (or a file storage service)
+        if (req.file) {
+          const fileName = `${Date.now()}_${req.file.originalname}`;
+          photoUrl = await uploadToGitHub(req.file.buffer, fileName);
+          // Assuming you want to update coverPhoto URL
+          updatedRestaurant.coverPhoto = photoUrl;
+        }
+    
+        // Update restaurant details
+        const updatedRestaurant = await restaurant.update({
+          name: name || restaurant.name,
+          address: address || restaurant.address,
+          hours: hoursjson || restaurant.hours,
+          description: description || restaurant.description,
+          price_range: price_range || restaurant.price_range,
+          latitude: latitude || restaurant.latitude,
+          longitude: longitude || restaurant.longitude,
+          // Optionally update coverPhoto
+          coverPhoto: photoUrl || restaurant.coverPhoto,
+          // Handle category if necessary
+          category: category ? JSON.parse(category) : restaurant.category, // Assuming category is stored as JSON
+        });
+    
+        res.status(200).json({
+          message: 'Restaurant updated successfully',
+          restaurant: updatedRestaurant,
+        });
+      } catch (error) {
+        console.error('Error updating restaurant:', error);
+        res.status(500).json({ error: 'Failed to update restaurant' });
+      } 
+  }
+}  
 module.exports = businessOwnerHandler;

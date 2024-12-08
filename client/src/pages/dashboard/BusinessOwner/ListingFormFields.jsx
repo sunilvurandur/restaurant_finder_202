@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Row, Col, Carousel, Button, Dropdown } from "react-bootstrap";
-import API from "../../../services/API"
+import API from "../../../services/API";
 
 const ListingFormFields = ({
   formData,
@@ -9,9 +9,9 @@ const ListingFormFields = ({
   onSubmit,
   mode = "add",
 }) => {
-  
   const [suggestions, setSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "address") {
@@ -19,8 +19,7 @@ const ListingFormFields = ({
         ...formData,
         [name]: value,
       });
-    }
-    else if (name.includes("_")) {
+    } else if (name.includes("_")) {
       const [day, timeOfDay] = name.split("_");
       setFormData((prevState) => ({
         ...prevState,
@@ -39,6 +38,7 @@ const ListingFormFields = ({
       });
     }
   };
+
   const handleAddressSearch = async (query) => {
     try {
       const response = await API.post("/users/searchAddress", {
@@ -49,8 +49,6 @@ const ListingFormFields = ({
         setShowDropdown(true);
       } else {
         setSuggestions([]);
-
-
         setShowDropdown(false);
       }
     } catch (error) {
@@ -76,10 +74,9 @@ const ListingFormFields = ({
     });
     setShowDropdown(false);
   };
+
   const handleCoverPhotoUpload = (e) => {
     const file = e.target.files[0];
-    console.log(file);
-  
     setFormData({
       ...formData,
       coverPhoto: file,
@@ -88,14 +85,11 @@ const ListingFormFields = ({
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    console.log(files);
     if (files.length > 0) {
-      // For updates, ensure not to exceed 10 images total
-      if ((formData.photos.length + files.length) > 10) {
+      if (formData.photos.length + files.length > 10) {
         alert("You can only upload a maximum of 10 photos");
         return;
       }
-
       setFormData({
         ...formData,
         photos: [...formData.photos, ...files],
@@ -111,7 +105,7 @@ const ListingFormFields = ({
   };
 
   return (
-    <Form onSubmit={onSubmit}>
+    <>
       {/* Cover photo upload */}
       <Form.Group controlId="coverPhoto" className="mb-3">
         <Form.Label>Cover Photo</Form.Label>
@@ -229,7 +223,7 @@ const ListingFormFields = ({
         ))}
       </Row>
 
-      {/* Category (Checkboxes) */}
+      {/* Category */}
       <Form.Group className="mb-3">
         <Form.Label>Category</Form.Label>
         <Row>
@@ -247,7 +241,7 @@ const ListingFormFields = ({
         </Row>
       </Form.Group>
 
-      {/* price range */}
+      {/* Price range */}
       <Form.Group className="mb-3">
         <Form.Label>Price Range</Form.Label>
         <Form.Control
@@ -293,10 +287,13 @@ const ListingFormFields = ({
       </Form.Group>
 
       {/* Submit Button */}
-      <Button variant="primary" type="submit" disabled={loading}>
-        {loading ? "Submitting..." : mode === "add" ? "Add Listing" : "Update Listing"}
-      </Button>
-    </Form>
+      
+      {mode === "add" && (
+  <Button variant="primary" onClick={onSubmit} disabled={loading}>
+    {loading ? "Submitting..." : "Add Listing"}
+  </Button>
+)}
+    </>
   );
 };
 

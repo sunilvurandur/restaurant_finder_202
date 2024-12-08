@@ -9,6 +9,6 @@ const users = new userHandler();
 
 router.post('/duplicate', (req, res)=> users.checkDuplicateListings(req, res))
 router.post('/listings', (req, res)=> users.viewdbRestaurants(req, res));
-router.delete('/', (req, res)=> users.deleteListing(req, res));
+router.delete('/listings', (req, res)=> users.deleteListing(req, res));
 
 module.exports = router;   

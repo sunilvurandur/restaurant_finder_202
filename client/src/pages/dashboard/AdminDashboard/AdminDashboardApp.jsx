@@ -11,7 +11,7 @@ const AdminDashboardApp = () => {
     try {
       const { data } = await API.post("/admin/listings"); // Fetch all listings
       if (data) {
-        setListings(data.listings);
+        setListings(data.listing);
       }
     } catch (error) {
       console.error("Error fetching listings:", error);
@@ -27,8 +27,8 @@ const AdminDashboardApp = () => {
   // Delete a listing by ID
   const handleDelete = async (id) => {
     try {
-      const { data } = await API.delete(`/admin/listings/${id}`);
-      if (data?.success) {
+      const { data } = await API.delete(`/admin/listings?id=${id}`);  // Using query param for id
+      if (data.listing) {
         setListings((prev) => prev.filter((listing) => listing.id !== id));
         alert("Listing deleted successfully!");
       }
@@ -37,6 +37,7 @@ const AdminDashboardApp = () => {
       alert("Failed to delete the listing.");
     }
   };
+  
 
   // Find duplicates based on name and address
   const findDuplicates = (listings) => {
